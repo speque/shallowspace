@@ -4,15 +4,13 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
-
-import ConfigParser
 from actors import Charactor
+from objects import *
 from controllers import *
+from map import Map
 #------------------------------------------------------------------------------
 class Game:
     """..."""
-
-    CONF_FILE = "/home/pekka/workspace/ShallowSpace/config/config.cfg"
 
     STATE_PREPARING = 0
     STATE_RUNNING = 1
@@ -27,14 +25,13 @@ class Game:
         
         self.players = [ Player(evManager) ]
         
-        config = ConfigParser.ConfigParser()
-        config.read(Game.CONF_FILE)
-        wallsUp = [int(x) for x in config.get('Map', 'wallsUp').split(',')]
-        wallsRight = [int(x) for x in config.get('Map', 'wallsRight').split(',')]
-        wallsDown = [int(x) for x in config.get('Map', 'wallsDown').split(',')]
-        wallsLeft = [int(x) for x in config.get('Map', 'wallsLeft').split(',')]
+        wallsUp = [int(x) for x in constants.CONFIG.get('Map', 'wallsUp').split(',')]
+        wallsRight = [int(x) for x in constants.CONFIG.get('Map', 'wallsRight').split(',')]
+        wallsDown = [int(x) for x in constants.CONFIG.get('Map', 'wallsDown').split(',')]
+        wallsLeft = [int(x) for x in constants.CONFIG.get('Map', 'wallsLeft').split(',')]
 
         self.map = Map(evManager, wallsUp, wallsRight, wallsLeft, wallsDown)
+        self.bullets = Bullets(evManager)
 
     #----------------------------------------------------------------------
     def Start(self):
@@ -48,6 +45,11 @@ class Game:
         if isinstance( event, TickEvent ):
             if self.state == Game.STATE_PREPARING:
                 self.Start()
+        
+        if isinstance( event, CharactorShootEvent ):
+            bullet = self.bullets.createBullet(event.charactor)
+            ev = BulletPlaceEvent(event.charactor.sector, bullet)
+            self.evManager.Post(ev)
 
 #------------------------------------------------------------------------------
 class Player:

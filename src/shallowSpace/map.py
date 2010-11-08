@@ -5,17 +5,13 @@ Created on Oct 31, 2010
 
 '''
 from event import MapBuiltEvent
+import constants
 #------------------------------------------------------------------------------
 class Map:
     """..."""
 
     STATE_PREPARING = 0
     STATE_BUILT = 1
-
-    DIRECTION_UP = 0
-    DIRECTION_RIGHT = 1
-    DIRECTION_DOWN = 2
-    DIRECTION_LEFT = 3
 
     #----------------------------------------------------------------------
     def __init__(self, evManager, wallsUp, wallsRight, wallsLeft, wallsDown):
@@ -39,25 +35,25 @@ class Map:
 
         for i in range(100):
             if i > 9:
-                self.sectors[i].neighbors[self.DIRECTION_UP] = self.sectors[i-10]
+                self.sectors[i].neighbors[constants.DIRECTION_UP] = self.sectors[i-10]
             if i == 0 or not (i+1) % 10 == 0:
-                self.sectors[i].neighbors[self.DIRECTION_RIGHT] = self.sectors[i+1]
+                self.sectors[i].neighbors[constants.DIRECTION_RIGHT] = self.sectors[i+1]
             if i < 90:
-                self.sectors[i].neighbors[self.DIRECTION_DOWN] = self.sectors[i+10]
+                self.sectors[i].neighbors[constants.DIRECTION_DOWN] = self.sectors[i+10]
             if not i % 10 == 0:
-                self.sectors[i].neighbors[self.DIRECTION_LEFT] = self.sectors[i-1]
+                self.sectors[i].neighbors[constants.DIRECTION_LEFT] = self.sectors[i-1]
         
         for i in self.wallsUp:
-            self.sectors[i].neighbors[self.DIRECTION_UP] = None
+            self.sectors[i].neighbors[constants.DIRECTION_UP] = None
             
         for i in self.wallsRight:
-            self.sectors[i].neighbors[self.DIRECTION_RIGHT] = None
+            self.sectors[i].neighbors[constants.DIRECTION_RIGHT] = None
             
         for i in self.wallsDown:
-            self.sectors[i].neighbors[self.DIRECTION_DOWN] = None
+            self.sectors[i].neighbors[constants.DIRECTION_DOWN] = None
             
         for i in self.wallsLeft:
-            self.sectors[i].neighbors[self.DIRECTION_LEFT] = None
+            self.sectors[i].neighbors[constants.DIRECTION_LEFT] = None
 
         self.state = Map.STATE_BUILT
 
@@ -73,10 +69,10 @@ class Sector:
 
         self.neighbors = range(4)
 
-        self.neighbors[Map.DIRECTION_UP] = None
-        self.neighbors[Map.DIRECTION_DOWN] = None
-        self.neighbors[Map.DIRECTION_LEFT] = None
-        self.neighbors[Map.DIRECTION_RIGHT] = None
+        self.neighbors[constants.DIRECTION_UP] = None
+        self.neighbors[constants.DIRECTION_DOWN] = None
+        self.neighbors[constants.DIRECTION_LEFT] = None
+        self.neighbors[constants.DIRECTION_RIGHT] = None
 
     #----------------------------------------------------------------------
     def MovePossible(self, direction):

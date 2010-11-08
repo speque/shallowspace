@@ -33,6 +33,15 @@ class CharactorMoveRequest(Event):
         self.name = "Charactor Move Request"
         self.direction = direction
 
+class CharactorTurnRequest(Event):
+    def __init__(self, direction):
+        self.name = "Charactor Turn Request"
+        self.direction = direction        
+
+class CharactorShootRequest(Event):
+    def __init__(self):
+        self.name = "Charactor Shoot Request"    
+        
 class CharactorPlaceEvent(Event):
     """this event occurs when a Charactor is *placed* in a sector,
     ie it doesn't move there from an adjacent sector."""
@@ -44,3 +53,33 @@ class CharactorMoveEvent(Event):
     def __init__(self, charactor):
         self.name = "Charactor Move Event"
         self.charactor = charactor
+        
+class CharactorTurnEvent(Event):
+    def __init__(self, charactor):
+        self.name = "Charactor Turn Event"
+        self.charactor = charactor        
+        
+class CharactorShootEvent(Event):
+    def __init__(self, charactor):
+        self.name = "Charactor Shoot Event"
+        self.charactor = charactor
+        
+class BulletPlaceEvent(Event):
+    def __init__(self, sector, bullet):
+        self.name = "Bullet Place Event"
+        self.sector = sector    
+        self.bullet = bullet
+        
+class BulletsMoveEvent(Event):
+    def __init__(self):
+        self.name = "Bullets Move Event"    
+        
+class BulletChangedSectorEvent(Event):
+    def __init__(self, bullet):
+        self.name = "Bullet Changed Sector Event"
+        self.bullet = bullet
+        
+class BulletDestroyedEvent(Event):
+    def __init__(self, bullet):
+        self.name = "Bullet Destroyed Event"
+        self.bullet = bullet   

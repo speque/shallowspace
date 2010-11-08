@@ -4,10 +4,11 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 import unittest
+import shallowSpace.constants
+from eventTester import EventTester   
 from shallowSpace.actors import Charactor
-from shallowSpace.shallowSpace import EventManager
+from shallowSpace.eventManager import EventManager
 from shallowSpace.game import Game
-from shallowSpace.map import Map 
 
 class BasicTests(unittest.TestCase):
 
@@ -15,6 +16,7 @@ class BasicTests(unittest.TestCase):
         em = EventManager()
         self.eventManager = em
         self.game = Game(em)
+        self.eventTester = EventTester()
 
 
     def tearDown(self):
@@ -25,12 +27,13 @@ class BasicTests(unittest.TestCase):
         c = Charactor(self.eventManager)
         map = self.game.map
         map.Build()
-        sec = map.sectors[0]
         c.Place(map.sectors[map.startSectorIndex])
-        c.Move(Map.DIRECTION_RIGHT) 
-        c.Move(Map.DIRECTION_DOWN) 
-        c.Move(Map.DIRECTION_LEFT) 
-        c.Move(Map.DIRECTION_UP) 
+        c.Move(shallowSpace.constants.DIRECTION_RIGHT)
+        
+        c.Move(shallowSpace.constants.DIRECTION_DOWN) 
+        c.Move(shallowSpace.constants.DIRECTION_LEFT) 
+        c.Move(shallowSpace.constants.DIRECTION_UP) 
+        sec = map.sectors[map.startSectorIndex]
         newSec = c.sector
         self.assertEqual(map.sectors.index(sec), map.sectors.index(newSec))
 

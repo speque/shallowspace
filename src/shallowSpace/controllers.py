@@ -5,9 +5,10 @@ Created on Oct 31, 2010
 '''
 
 import pygame
+import constants
 from pygame.locals import *
-from map import Map
 from event import *
+
 #------------------------------------------------------------------------------
 class KeyboardController:
     """..."""
@@ -27,20 +28,23 @@ class KeyboardController:
                      and event.key == K_ESCAPE:
                     ev = QuitEvent()
                 elif event.type == KEYDOWN \
+                     and event.key == K_SPACE:
+                    ev = CharactorShootRequest()
+                elif event.type == KEYDOWN \
                      and event.key == K_UP:
-                    direction = Map.DIRECTION_UP
+                    direction = constants.DIRECTION_UP
                     ev = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN \
                      and event.key == K_DOWN:
-                    direction = Map.DIRECTION_DOWN
+                    direction = constants.DIRECTION_DOWN
                     ev = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN \
                      and event.key == K_LEFT:
-                    direction = Map.DIRECTION_LEFT
+                    direction = constants.DIRECTION_LEFT
                     ev = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN \
                      and event.key == K_RIGHT:
-                    direction = Map.DIRECTION_RIGHT
+                    direction = constants.DIRECTION_RIGHT
                     ev = CharactorMoveRequest(direction)
 
                 if ev:
@@ -60,7 +64,8 @@ class CPUSpinnerController:
     def Run(self):
         clock = pygame.time.Clock()
         while self.keepGoing:
-            clock.tick(10)
+            self.evManager.UpdateListeners()
+            clock.tick(60)
             event = TickEvent()
             self.evManager.Post( event )
 

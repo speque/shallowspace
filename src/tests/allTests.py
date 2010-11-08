@@ -9,9 +9,9 @@ import test_charactor
 
 if __name__=="__main__":
     print ''
-    print '******************************************'
-    print '* Test suite for Turku Horror initiated: *'
-    print '******************************************'
+    print '*******************************************'
+    print '* Test suite for Shallow Space initiated: *'
+    print '*******************************************'
     print ''
 
     charactorSuite = test_charactor.suite()
