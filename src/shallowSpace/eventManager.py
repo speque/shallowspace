@@ -24,7 +24,6 @@ class EventManager:
     def UpdateListeners(self):
         for listener in self.newListeners:
             self.RegisterListener(listener)
-            debug(listener)
         self.newListeners = []
             
     #----------------------------------------------------------------------
