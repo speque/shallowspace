@@ -15,7 +15,7 @@ class PygameView:
     
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.RegisterListener( self )
+        self.evManager.register_listener( self )
 
         pygame.init()
         self.window = pygame.display.set_mode( (constants.GRID_SIZE*10, constants.GRID_SIZE*10) )
@@ -31,7 +31,7 @@ class PygameView:
 
 
     #----------------------------------------------------------------------
-    def ShowMap(self, gameMap):
+    def show_map(self, gameMap):
         squareRect = pygame.Rect( ( -1*constants.GRID_SIZE,0, constants.GRID_SIZE, constants.GRID_SIZE ) )
 
         i = 0
@@ -47,36 +47,36 @@ class PygameView:
             newSprite = None
 
     #----------------------------------------------------------------------
-    def ShowCharactor(self, charactor):
+    def show_charactor(self, charactor):
         charactorSprite = CharactorSprite( self.frontSprites )
 
         sector = charactor.sector
-        sectorSprite = self.GetSectorSprite( sector )
+        sectorSprite = self.get_sector_sprite( sector )
         charactorSprite.rect.center = sectorSprite.rect.center
 
     #----------------------------------------------------------------------
-    def MoveCharactor(self, charactor):
-        charactorSprite = self.GetCharactorSprite( charactor )
+    def move_charactor(self, charactor):
+        charactorSprite = self.get_charactor_sprite( charactor )
 
         sector = charactor.sector
-        sectorSprite = self.GetSectorSprite( sector )
+        sectorSprite = self.get_sector_sprite( sector )
 
         charactorSprite.moveTo = sectorSprite.rect.center
         
     #----------------------------------------------------------------------
-    def TurnCharactor(self, charactor):
-        charactorSprite = self.GetCharactorSprite( charactor )
+    def turn_charactor(self, charactor):
+        charactorSprite = self.get_charactor_sprite( charactor )
         
         charactorSprite.turnTo = charactor.direction
         
     #----------------------------------------------------------------------
-    def ShowBullet(self, sector, bullet):
+    def show_bullet(self, sector, bullet):
         bulletSprite = BulletSprite(bullet, sector, self.frontSprites)
-        bulletSprite.rect.center = self.GetSectorSprite(sector).rect.center
+        bulletSprite.rect.center = self.get_sector_sprite(sector).rect.center
         
     #----------------------------------------------------------------------
-    def MoveBullets(self):
-        bulletSprites = self.GetBulletSprites()
+    def move_bullets(self):
+        bulletSprites = self.get_bullet_sprites()
         for b in bulletSprites:
             if b.bullet.direction == constants.DIRECTION_UP:
                 deltaX = 0
@@ -95,17 +95,17 @@ class PygameView:
             if math.floor(x/constants.GRID_SIZE) != math.floor((x + deltaX)/constants.GRID_SIZE) or \
             math.floor(y/constants.GRID_SIZE) != math.floor((y + deltaY) / constants.GRID_SIZE):
                 ev = BulletChangedSectorEvent(b.bullet)
-                self.evManager.Post(ev)
+                self.evManager.post(ev)
                 
     #----------------------------------------------------------------------
-    def DestroyBullet(self, bullet):
-        bulletSprites = self.GetBulletSprites()
+    def destroy_bullet(self, bullet):
+        bulletSprites = self.get_bullet_sprites()
         for b in bulletSprites:
             if b.bullet == bullet:
                 b.remove(self.frontSprites)
         
     #----------------------------------------------------------------------
-    def GetCharactorSprite(self, charactor):
+    def get_charactor_sprite(self, charactor):
         for s in self.frontSprites:
             if isinstance(s, CharactorSprite):
                 #currently there is only one
@@ -113,18 +113,18 @@ class PygameView:
         return None
 
     #----------------------------------------------------------------------
-    def GetBulletSprites(self):
+    def get_bullet_sprites(self):
         return [x for x in self.frontSprites if isinstance(x, BulletSprite)]
         
     #----------------------------------------------------------------------
-    def GetSectorSprite(self, sector):
+    def get_sector_sprite(self, sector):
         for s in self.backSprites:
             if hasattr(s, "sector") and s.sector == sector:
                 return s
 
     #----------------------------------------------------------------------
-    def Draw(self):
-        #Draw Everything
+    def draw(self):
+        #draw Everything
         self.backSprites.clear( self.window, self.background )
         self.frontSprites.clear( self.window, self.background )
 
@@ -138,28 +138,28 @@ class PygameView:
         pygame.display.update( dirtyRects )
 
     #----------------------------------------------------------------------
-    def Notify(self, event):
+    def notify(self, event):
         if not isinstance( event, TickEvent ):
             if isinstance( event, MapBuiltEvent ):
                 gameMap = event.map
-                self.ShowMap( gameMap )
+                self.show_map( gameMap )
 
             elif isinstance( event, CharactorPlaceEvent ):
-                self.ShowCharactor( event.charactor )
+                self.show_charactor( event.charactor )
 
             elif isinstance( event, CharactorMoveEvent ):
-                self.MoveCharactor( event.charactor )
+                self.move_charactor( event.charactor )
 
             elif isinstance( event, CharactorTurnEvent ):
-                self.TurnCharactor( event.charactor )
+                self.turn_charactor( event.charactor )
                 
             elif isinstance( event, BulletPlaceEvent ):
-                self.ShowBullet( event.sector, event.bullet )
+                self.show_bullet( event.sector, event.bullet )
 
             elif isinstance( event, BulletsMoveEvent ):
-                self.MoveBullets()
+                self.move_bullets()
                 
             elif isinstance( event, BulletDestroyedEvent ):
-                self.DestroyBullet(event.bullet)
+                self.destroy_bullet(event.bullet)
                 
-            self.Draw()
+            self.draw()

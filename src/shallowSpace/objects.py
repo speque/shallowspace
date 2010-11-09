@@ -12,31 +12,31 @@ class Bullets:
         self.evManager.newListeners.append(self)
         self.bullets = []
         
-    def createBullet(self, shooter):
+    def create_bullet(self, shooter):
         newBullet = Bullet(shooter)
         self.bullets.append(newBullet)
         return newBullet
         
-    def destroyBullet(self, bullet):
+    def destroy_bullet(self, bullet):
         self.bullets.remove(bullet)
         ev = BulletDestroyedEvent(bullet)
-        self.evManager.Post(ev)
+        self.evManager.post(ev)
         
-    def Notify(self, event):
+    def notify(self, event):
         if len(self.bullets) != 0 and isinstance(event, TickEvent):
-            self.MoveBullets()
+            self.move_bullets()
         elif isinstance(event, BulletChangedSectorEvent):
             bullet = event.bullet
             if bullet.sector.neighbors[bullet.direction]:
                 bullet.sector = bullet.sector.neighbors[bullet.direction]
             else:
-                self.destroyBullet(bullet)
+                self.destroy_bullet(bullet)
             
-    def MoveBullets(self):
+    def move_bullets(self):
         for b in self.bullets:
             b.age = b.age + 1
         ev = BulletsMoveEvent()
-        self.evManager.Post(ev)
+        self.evManager.post(ev)
 
 class Bullet:
     """..."""

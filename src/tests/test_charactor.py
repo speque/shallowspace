@@ -5,9 +5,9 @@ Created on Oct 31, 2010
 '''
 import unittest
 import shallowSpace.constants
-from eventTester import EventTester   
+from event_tester import EventTester   
 from shallowSpace.actors import Charactor
-from shallowSpace.eventManager import EventManager
+from shallowSpace.eventmanager import EventManager
 from shallowSpace.game import Game
 from shallowSpace.event import CharactorMoveEvent
 
@@ -18,7 +18,7 @@ class BasicTests(unittest.TestCase):
         self.eventManager = em
         self.game = Game(em)
         self.eventTester = EventTester()
-        self.eventManager.RegisterListener(self.eventTester)
+        self.eventManager.register_listener(self.eventTester)
 
 
     def tearDown(self):
@@ -28,15 +28,15 @@ class BasicTests(unittest.TestCase):
     def testMove(self):
         c = Charactor(self.eventManager)
         map = self.game.map
-        map.Build()
-        c.Place(map.sectors[map.startSectorIndex])
-        c.Move(shallowSpace.constants.DIRECTION_RIGHT)
+        map.build()
+        c.place(map.sectors[map.startSectorIndex])
+        c.move(shallowSpace.constants.DIRECTION_RIGHT)
         self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.Move(shallowSpace.constants.DIRECTION_DOWN) 
+        c.move(shallowSpace.constants.DIRECTION_DOWN) 
         self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.Move(shallowSpace.constants.DIRECTION_LEFT) 
+        c.move(shallowSpace.constants.DIRECTION_LEFT) 
         self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.Move(shallowSpace.constants.DIRECTION_UP) 
+        c.move(shallowSpace.constants.DIRECTION_UP) 
         self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
         sec = map.sectors[map.startSectorIndex]
         newSec = c.sector

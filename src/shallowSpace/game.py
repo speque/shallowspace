@@ -19,7 +19,7 @@ class Game:
     #----------------------------------------------------------------------
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.RegisterListener( self )
+        self.evManager.register_listener( self )
 
         self.state = Game.STATE_PREPARING
         
@@ -34,28 +34,28 @@ class Game:
         self.bullets = Bullets(evManager)
 
     #----------------------------------------------------------------------
-    def Start(self):
-        self.map.Build()
+    def start(self):
+        self.map.build()
         self.state = Game.STATE_RUNNING
         ev = GameStartedEvent( self )
-        self.evManager.Post( ev )
+        self.evManager.post( ev )
 
     #----------------------------------------------------------------------
-    def Notify(self, event):
+    def notify(self, event):
         if isinstance( event, TickEvent ):
             if self.state == Game.STATE_PREPARING:
-                self.Start()
+                self.start()
         
         if isinstance( event, CharactorShootEvent ):
-            bullet = self.bullets.createBullet(event.charactor)
+            bullet = self.bullets.create_bullet(event.charactor)
             ev = BulletPlaceEvent(event.charactor.sector, bullet)
-            self.evManager.Post(ev)
+            self.evManager.post(ev)
 
 #------------------------------------------------------------------------------
 class Player:
     """..."""
     def __init__(self, evManager):
         self.evManager = evManager
-        #self.evManager.RegisterListener( self )
+        #self.evManager.register_listener( self )
 
         self.charactors = [ Charactor(evManager) ]

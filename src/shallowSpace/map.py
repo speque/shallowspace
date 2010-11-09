@@ -29,7 +29,7 @@ class Map:
         self.wallsDown = wallsDown
 
     #----------------------------------------------------------------------
-    def Build(self):
+    def build(self):
         for i in range(100):
             self.sectors[i] = Sector( self.evManager )
 
@@ -58,7 +58,7 @@ class Map:
         self.state = Map.STATE_BUILT
 
         ev = MapBuiltEvent( self )
-        self.evManager.Post( ev )
+        self.evManager.post( ev )
 
 #------------------------------------------------------------------------------
 class Sector:

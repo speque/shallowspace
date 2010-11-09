@@ -14,10 +14,10 @@ class KeyboardController:
     """..."""
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.RegisterListener( self )
+        self.evManager.register_listener( self )
 
     #----------------------------------------------------------------------
-    def Notify(self, event):
+    def notify(self, event):
         if isinstance( event, TickEvent ):
             #Handle Input Events
             for event in pygame.event.get():
@@ -48,7 +48,7 @@ class KeyboardController:
                     ev = CharactorMoveRequest(direction)
 
                 if ev:
-                    self.evManager.Post( ev )
+                    self.evManager.post( ev )
 
 
 #------------------------------------------------------------------------------
@@ -56,21 +56,21 @@ class CPUSpinnerController:
     """..."""
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.RegisterListener( self )
+        self.evManager.register_listener( self )
 
         self.keepGoing = 1
 
     #----------------------------------------------------------------------
-    def Run(self):
+    def run(self):
         clock = pygame.time.Clock()
         while self.keepGoing:
-            self.evManager.UpdateListeners()
+            self.evManager.update_listeners()
             clock.tick(60)
             event = TickEvent()
-            self.evManager.Post( event )
+            self.evManager.post( event )
 
     #----------------------------------------------------------------------
-    def Notify(self, event):
+    def notify(self, event):
         if isinstance( event, QuitEvent ):
             #this will stop the while loop from running
             self.keepGoing = False

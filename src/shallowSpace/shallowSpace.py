@@ -6,25 +6,25 @@ Created on Oct 31, 2010
 
 from game import Game
 from pygameview import PygameView
-from eventManager import EventManager
+from eventmanager import EventManager
 import ConfigParser
 import os
 import constants
 
 #------------------------------------------------------------------------------
 from controllers import KeyboardController, CPUSpinnerController
-import shallowSpace
+import shallowspace
 
 def main():
     """Main program to start the game"""
     
     evManager = EventManager()
 
-    programPath = os.path.join(os.path.dirname(shallowSpace.__file__))
-    confFilePath = os.path.abspath(programPath, "../../config/config.cfg")
+    programPath = os.path.dirname(shallowspace.__file__)
+    confFilePath = os.path.abspath(os.path.join(programPath, "../../config/config.cfg"))
     config = ConfigParser.ConfigParser()
     config.read(confFilePath)
-    config.set("Images", "rootdir", os.path.abspath(programPath, "../../"))
+    config.set("Images", "rootdir", os.path.abspath(os.path.join(programPath, "../../")))
     constants.CONFIG = config
 
     keybd = KeyboardController( evManager )
@@ -32,7 +32,7 @@ def main():
     pygameView = PygameView( evManager )
     game = Game( evManager )
     
-    spinner.Run()
+    spinner.run()
 
 if __name__ == "__main__":
     main()

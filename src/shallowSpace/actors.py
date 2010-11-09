@@ -13,48 +13,48 @@ class Charactor:
     
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.RegisterListener( self )
+        self.evManager.register_listener( self )
         self.sector = None
         self.direction = constants.DIRECTION_DOWN
 
     #----------------------------------------------------------------------
-    def Move(self, direction):
+    def move(self, direction):
         if self.sector.MovePossible( direction ):
             newSector = self.sector.neighbors[direction]
             self.sector = newSector
             ev = CharactorMoveEvent( self )
-            self.evManager.Post( ev )
+            self.evManager.post( ev )
 
     #----------------------------------------------------------------------
-    def Turn(self, direction):
+    def turn(self, direction):
         self.direction = direction
         ev = CharactorTurnEvent(self)
-        self.evManager.Post(ev)
+        self.evManager.post(ev)
 
     #----------------------------------------------------------------------
-    def Shoot(self):
+    def shoot(self):
         ev = CharactorShootEvent(self)
-        self.evManager.Post(ev)
+        self.evManager.post(ev)
         
     #----------------------------------------------------------------------
-    def Place(self, sector):
+    def place(self, sector):
         self.sector = sector
         ev = CharactorPlaceEvent( self )
-        self.evManager.Post( ev )
+        self.evManager.post( ev )
 
     #----------------------------------------------------------------------
-    def Notify(self, event):
+    def notify(self, event):
         if isinstance( event, GameStartedEvent ):
             gameMap = event.game.map
-            self.Place( gameMap.sectors[gameMap.startSectorIndex] )
+            self.place( gameMap.sectors[gameMap.startSectorIndex] )
         
         elif isinstance(event, CharactorMoveRequest):
             if self.direction != event.direction:
                 # turn instead of move
-                self.Turn(event.direction)
+                self.turn(event.direction)
             else:
                 # the charactor already faces that direction, let's move there
-                self.Move(event.direction)
+                self.move(event.direction)
                 
         elif isinstance(event, CharactorShootRequest):
-                self.Shoot()
+                self.shoot()
