@@ -2,10 +2,10 @@ class EventTester:
     def __init__(self):
         self.lastEvent = None
     
-    def Notify(self, ev):
-        self.lastEvent = ev
+    def notify(self, event):
+        self.lastEvent = event
         
-    def checkLastEvent(self):
+    def check_last_event(self):
         result = self.lastEvent
         self.lastEvent = None
         return result 

@@ -4,12 +4,12 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 import unittest
-import shallowSpace.constants
+import shallowspace.constants
 from event_tester import EventTester   
-from shallowSpace.actors import Charactor
-from shallowSpace.eventmanager import EventManager
-from shallowSpace.game import Game
-from shallowSpace.event import CharactorMoveEvent
+from shallowspace.actors import Charactor
+from shallowspace.eventmanager import EventManager
+from shallowspace.game import Game
+from shallowspace.event import CharactorMoveEvent
 
 class BasicTests(unittest.TestCase):
 
@@ -30,14 +30,14 @@ class BasicTests(unittest.TestCase):
         map = self.game.map
         map.build()
         c.place(map.sectors[map.startSectorIndex])
-        c.move(shallowSpace.constants.DIRECTION_RIGHT)
-        self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.move(shallowSpace.constants.DIRECTION_DOWN) 
-        self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.move(shallowSpace.constants.DIRECTION_LEFT) 
-        self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
-        c.move(shallowSpace.constants.DIRECTION_UP) 
-        self.assertTrue(isinstance(self.eventTester.checkLastEvent(), CharactorMoveEvent))
+        c.move(shallowspace.constants.DIRECTION_RIGHT)
+        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
+        c.move(shallowspace.constants.DIRECTION_DOWN) 
+        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
+        c.move(shallowspace.constants.DIRECTION_LEFT) 
+        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
+        c.move(shallowspace.constants.DIRECTION_UP) 
+        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
         sec = map.sectors[map.startSectorIndex]
         newSec = c.sector
         self.assertEqual(map.sectors.index(sec), map.sectors.index(newSec))
