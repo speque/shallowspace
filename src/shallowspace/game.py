@@ -8,6 +8,8 @@ from actors import Charactor
 from objects import *
 from controllers import *
 from map import Map
+import ConfigParser
+import os
 #------------------------------------------------------------------------------
 class Game:
     """..."""
@@ -24,6 +26,13 @@ class Game:
         self.state = Game.STATE_PREPARING
         
         self.players = [ Player(evManager) ]
+        
+        programPath = os.path.dirname(__file__)
+        confFilePath = os.path.abspath(os.path.join(programPath, "../../config/config.cfg"))
+        config = ConfigParser.ConfigParser()
+        config.read(confFilePath)
+        config.set("Images", "rootdir", os.path.abspath(os.path.join(programPath, "../../")))
+        constants.CONFIG = config
         
         wallsUp = [int(x) for x in constants.CONFIG.get('Map', 'wallsUp').split(',')]
         wallsRight = [int(x) for x in constants.CONFIG.get('Map', 'wallsRight').split(',')]

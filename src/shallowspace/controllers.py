@@ -64,7 +64,6 @@ class CPUSpinnerController:
     def run(self):
         clock = pygame.time.Clock()
         while self.keepGoing:
-            self.evManager.update_listeners()
             clock.tick(60)
             event = TickEvent()
             self.evManager.post( event )

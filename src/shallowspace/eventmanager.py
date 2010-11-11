@@ -8,8 +8,6 @@ class EventManager:
     def __init__(self ):
         from weakref import WeakKeyDictionary
         self.listeners = WeakKeyDictionary()
-        self.eventQueue= []
-        self.newListeners = []
 
     #----------------------------------------------------------------------
     def register_listener( self, listener ):
@@ -19,12 +17,6 @@ class EventManager:
     def unregister_listener( self, listener ):
         if listener in self.listeners:
             del self.listeners[ listener ]
-
-    #----------------------------------------------------------------------
-    def update_listeners(self):
-        for listener in self.newListeners:
-            self.register_listener(listener)
-        self.newListeners = []
             
     #----------------------------------------------------------------------
     def post( self, event ):

@@ -9,7 +9,7 @@ from event import *
 class Bullets:
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.newListeners.append(self)
+        self.evManager.register_listener(self)
         self.bullets = []
         
     def create_bullet(self, shooter):
