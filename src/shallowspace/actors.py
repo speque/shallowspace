@@ -9,11 +9,11 @@ import constants
 #------------------------------------------------------------------------------
 class Charactor:
     """Class representing a player controlled charactor 
-    (misspelled to avoid confusion with characters)  """
+    (misspelled to avoid confusion with textual characters)  """
     
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.register_listener( self )
+        self.evManager.register_listener(self)
         self.sector = None
         self.direction = constants.DIRECTION_DOWN
 
@@ -22,7 +22,7 @@ class Charactor:
         if self.sector.move_possible( direction ):
             newSector = self.sector.neighbors[direction]
             self.sector = newSector
-            ev = CharactorMoveEvent( self )
+            ev = CharactorMoveEvent(self)
             self.evManager.post( ev )
 
     #----------------------------------------------------------------------
@@ -39,7 +39,7 @@ class Charactor:
     #----------------------------------------------------------------------
     def place(self, sector):
         self.sector = sector
-        ev = CharactorPlaceEvent( self )
+        ev = CharactorPlaceEvent(self)
         self.evManager.post( ev )
 
     #----------------------------------------------------------------------

@@ -9,7 +9,7 @@ from event_tester import EventTester
 from shallowspace.actors import Charactor
 from shallowspace.eventmanager import EventManager
 from shallowspace.game import Game
-from shallowspace.event import CharactorMoveEvent
+from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent
 
 class BasicTests(unittest.TestCase):
 
@@ -23,6 +23,28 @@ class BasicTests(unittest.TestCase):
 
     def tearDown(self):
         pass
+        
+    def testInit(self):
+        c = Charactor(self.eventManager)
+        self.assertTrue(c in self.eventManager.listeners)
+        self.assertEqual(c.sector, None)
+        self.assertEqual(c.direction, shallowspace.constants.DIRECTION_DOWN)
+
+    def testTurn(self):
+        c = Charactor(self.eventManager)
+        c.turn(shallowspace.constants.DIRECTION_RIGHT)
+        self.assertEqual(c.direction, shallowspace.constants.DIRECTION_RIGHT)
+        lastEvent = self.eventTester.check_last_event()
+        self.assertTrue(isinstance(lastEvent, CharactorTurnEvent))
+        self.assertEqual(lastEvent.charactor, c)
+        
+
+    def testShoot(self):
+        c = Charactor(self.eventManager)
+        c.shoot()
+        lastEvent = self.eventTester.check_last_event()
+        self.assertTrue(isinstance(lastEvent, CharactorShootEvent))
+        self.assertEqual(lastEvent.charactor, c)
 
 
     def testMove(self):
