@@ -8,7 +8,7 @@ from event import *
 import constants
 #------------------------------------------------------------------------------
 class Charactor:
-    """Class representing a paleyer controlled charactor 
+    """Class representing a player controlled charactor 
     (misspelled to avoid confusion with characters)  """
     
     def __init__(self, evManager):
