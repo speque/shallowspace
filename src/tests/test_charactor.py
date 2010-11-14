@@ -9,7 +9,8 @@ from event_tester import EventTester
 from shallowspace.actors import Charactor
 from shallowspace.eventmanager import EventManager
 from shallowspace.game import Game
-from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent
+from shallowspace.map import Sector
+from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent, CharactorPlaceEvent
 
 class BasicTests(unittest.TestCase):
 
@@ -46,6 +47,13 @@ class BasicTests(unittest.TestCase):
         self.assertTrue(isinstance(lastEvent, CharactorShootEvent))
         self.assertEqual(lastEvent.charactor, c)
 
+    def testPlace(self):
+        c = Charactor(self.eventManager)
+        s = Sector()
+        c.place(s)
+        lastEvent = self.eventTester.check_last_event()
+        self.assertTrue(isinstance(lastEvent, CharactorPlaceEvent))
+        self.assertEqual(lastEvent.charactor, c)
 
     def testMove(self):
         c = Charactor(self.eventManager)

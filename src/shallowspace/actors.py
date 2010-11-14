@@ -44,9 +44,9 @@ class Charactor:
 
     #----------------------------------------------------------------------
     def notify(self, event):
-        if isinstance( event, GameStartedEvent ):
+        if isinstance(event, GameStartedEvent):
             gameMap = event.game.map
-            self.place( gameMap.sectors[gameMap.startSectorIndex] )
+            self.place(gameMap.sectors[gameMap.startSectorIndex])
         
         elif isinstance(event, CharactorMoveRequest):
             if self.direction != event.direction:
