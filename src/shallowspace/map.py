@@ -31,7 +31,7 @@ class Map:
     #----------------------------------------------------------------------
     def build(self):
         for i in range(100):
-            self.sectors[i] = Sector( self.evManager )
+            self.sectors[i] = Sector()
 
         for i in range(100):
             if i > 9:
@@ -63,10 +63,7 @@ class Map:
 #------------------------------------------------------------------------------
 class Sector:
     """..."""
-    def __init__(self, evManager):
-        self.evManager = evManager
-        #self.evManager.RegisterListener( self )
-
+    def __init__(self):
         self.neighbors = range(4)
 
         self.neighbors[constants.DIRECTION_UP] = None
@@ -75,7 +72,7 @@ class Sector:
         self.neighbors[constants.DIRECTION_RIGHT] = None
 
     #----------------------------------------------------------------------
-    def MovePossible(self, direction):
+    def move_possible(self, direction):
         if self.neighbors[direction]:
             return 1
         else:
