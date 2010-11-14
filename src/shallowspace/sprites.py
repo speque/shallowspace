@@ -13,12 +13,17 @@ class SectorSprite(pygame.sprite.Sprite):
     
     def __init__(self, sector, group=None):
         pygame.sprite.Sprite.__init__(self, group)
-        self.image = pygame.Surface( (70,70) )
+        self.image = pygame.Surface((70,70))
         self.image = self.image.convert_alpha()
-        self.image.fill( (0,0,0,0) )
+        self.image.fill((0,0,0,100))
 
         self.sector = sector
         
+    def dim(self):
+        self.image.fill((0,0,0,100))
+        
+    def lit(self):
+        self.image.fill((0,0,0,0))
 #------------------------------------------------------------------------------
 class BulletSprite(pygame.sprite.Sprite):
     """ A class representing a sprite for a bullet """

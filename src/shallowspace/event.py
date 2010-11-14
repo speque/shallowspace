@@ -82,4 +82,14 @@ class BulletChangedSectorEvent(Event):
 class BulletDestroyedEvent(Event):
     def __init__(self, bullet):
         self.name = "Bullet Destroyed Event"
-        self.bullet = bullet   
+        self.bullet = bullet
+        
+class SectorLitEvent(Event):
+    def __init__(self, sector):
+        self.name = "Sector Lit Event"
+        self.sector = sector
+        
+class SectorDimEvent(Event):
+    def __init__(self, sector):
+        self.name = "Sector Dim Event"
+        self.sector = sector

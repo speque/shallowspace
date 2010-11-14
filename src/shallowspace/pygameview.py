@@ -53,6 +53,7 @@ class PygameView:
         sector = charactor.sector
         sectorSprite = self.get_sector_sprite( sector )
         charactorSprite.rect.center = sectorSprite.rect.center
+        sectorSprite.lit()
 
     #----------------------------------------------------------------------
     def move_charactor(self, charactor):
@@ -115,6 +116,16 @@ class PygameView:
     #----------------------------------------------------------------------
     def get_bullet_sprites(self):
         return [x for x in self.frontSprites if isinstance(x, BulletSprite)]
+    
+    #----------------------------------------------------------------------
+    def dim_sector(self, sector):
+        sector_sprite = self.get_sector_sprite(sector)
+        sector_sprite.dim()
+        
+    #----------------------------------------------------------------------
+    def lit_sector(self, sector):
+        sector_sprite = self.get_sector_sprite(sector)
+        sector_sprite.lit()
         
     #----------------------------------------------------------------------
     def get_sector_sprite(self, sector):
@@ -161,5 +172,11 @@ class PygameView:
                 
             elif isinstance( event, BulletDestroyedEvent ):
                 self.destroy_bullet(event.bullet)
+                
+            elif isinstance( event, SectorDimEvent ):
+                self.dim_sector(event.sector)
+                
+            elif isinstance( event, SectorLitEvent ):
+                self.lit_sector(event.sector)
                 
             self.draw()
