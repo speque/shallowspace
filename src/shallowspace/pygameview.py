@@ -9,6 +9,7 @@ from sprites import CharactorSprite, SectorSprite, BulletSprite
 from event import *
 import constants
 import math
+from utils import *
 
 class PygameView:
     """A class representing the game view"""
@@ -118,14 +119,16 @@ class PygameView:
         return [x for x in self.frontSprites if isinstance(x, BulletSprite)]
     
     #----------------------------------------------------------------------
-    def dim_sector(self, sector):
-        sector_sprite = self.get_sector_sprite(sector)
-        sector_sprite.dim()
+    def dim_all_sectors(self):
+        for s in self.backSprites:
+            if hasattr(s, "sector"):
+                s.dim()
         
     #----------------------------------------------------------------------
-    def lit_sector(self, sector):
-        sector_sprite = self.get_sector_sprite(sector)
-        sector_sprite.lit()
+    def lit_sectors(self, sectors):
+        for sector in sectors:
+            sector_sprite = self.get_sector_sprite(sector)
+            sector_sprite.lit()
         
     #----------------------------------------------------------------------
     def get_sector_sprite(self, sector):
@@ -173,10 +176,10 @@ class PygameView:
             elif isinstance( event, BulletDestroyedEvent ):
                 self.destroy_bullet(event.bullet)
                 
-            elif isinstance( event, SectorDimEvent ):
-                self.dim_sector(event.sector)
+            elif isinstance( event, DimAllSectorsRequest ):
+                self.dim_all_sectors()
                 
-            elif isinstance( event, SectorLitEvent ):
-                self.lit_sector(event.sector)
+            elif isinstance( event, SectorsLitRequest ):
+                self.lit_sectors(event.sectors)
                 
             self.draw()

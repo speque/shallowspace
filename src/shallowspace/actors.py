@@ -16,6 +16,7 @@ class Charactor:
         self.evManager.register_listener(self)
         self.sector = None
         self.direction = constants.DIRECTION_DOWN
+        self.radius = 2
 
     #----------------------------------------------------------------------
     def move(self, direction):
@@ -26,11 +27,7 @@ class Charactor:
             
             ev = CharactorMoveEvent(self)
             self.evManager.post(ev)
-            ev = SectorDimEvent(oldSector)
-            self.evManager.post(ev)
-            ev = SectorLitEvent(newSector)
-            self.evManager.post(ev)
-
+            
     #----------------------------------------------------------------------
     def turn(self, direction):
         self.direction = direction
@@ -47,7 +44,7 @@ class Charactor:
         self.sector = sector
         ev = CharactorPlaceEvent(self)
         self.evManager.post( ev )
-
+        
     #----------------------------------------------------------------------
     def notify(self, event):
         if isinstance(event, GameStartedEvent):
