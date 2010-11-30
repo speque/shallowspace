@@ -33,8 +33,6 @@ class Bullets:
                 self.destroy_bullet(bullet)
             
     def move_bullets(self):
-        for b in self.bullets:
-            b.age = b.age + 1
         ev = BulletsMoveEvent()
         self.evManager.post(ev)
 
@@ -45,4 +43,3 @@ class Bullet:
         self.sector = shooter.sector
         self.direction = shooter.direction
         self.speed = 20
-        self.age = 0

@@ -21,10 +21,7 @@ class Charactor:
     #----------------------------------------------------------------------
     def move(self, direction):
         if self.sector.move_possible( direction ):
-            oldSector = self.sector
-            newSector = self.sector.neighbors[direction]
-            self.sector = newSector
-            
+            self.sector = self.sector.neighbors[direction]
             ev = CharactorMoveEvent(self)
             self.evManager.post(ev)
             

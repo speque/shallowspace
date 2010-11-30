@@ -22,7 +22,7 @@ class Map:
 
         self.state = Map.STATE_PREPARING
 
-        self.sectors = range(100)
+        self.sectors = None
         self.startSectorIndex = 0
         
         self.wallsUp = wallsUp
@@ -32,35 +32,34 @@ class Map:
 
     #----------------------------------------------------------------------
     def build(self):
-        for i in range(100):
-            self.sectors[i] = Sector()
-
-        for i in range(100):
+        self.sectors = [Sector() for x in xrange(100)]
+        
+        for i, sector in enumerate(self.sectors):
             if i > 9: #not first row
-                self.sectors[i].neighbors[constants.DIRECTION_UP] = self.sectors[i-10]
+                sector.neighbors[constants.DIRECTION_UP] = self.sectors[i-10]
                 
                 upleft = i-11 
                 if upleft > -1 and not (upleft+1) % 10 == 0:
-                    self.sectors[i].corners[constants.DIRECTION_UP_LEFT] = self.sectors[upleft]
+                    sector.corners[constants.DIRECTION_UP_LEFT] = self.sectors[upleft]
                 upright = i-9
                 if not (upright) % 10 == 0:
-                    self.sectors[i].corners[constants.DIRECTION_UP_RIGHT] = self.sectors[upright]
+                    sector.corners[constants.DIRECTION_UP_RIGHT] = self.sectors[upright]
             
             if i == 0 or not (i+1) % 10 == 0: #not rightmost column
-                self.sectors[i].neighbors[constants.DIRECTION_RIGHT] = self.sectors[i+1]
+                sector.neighbors[constants.DIRECTION_RIGHT] = self.sectors[i+1]
             
             if i < 90: #not last row
-                self.sectors[i].neighbors[constants.DIRECTION_DOWN] = self.sectors[i+10]
+                sector.neighbors[constants.DIRECTION_DOWN] = self.sectors[i+10]
                 
                 downleft = i+9 
                 if not (downleft+1) % 10 == 0 :
-                    self.sectors[i].corners[constants.DIRECTION_DOWN_LEFT] = self.sectors[downleft]
+                    sector.corners[constants.DIRECTION_DOWN_LEFT] = self.sectors[downleft]
                 downright = i+11
                 if downright < 100 and not (downright) % 10 == 0:
-                    self.sectors[i].corners[constants.DIRECTION_DOWN_RIGHT] = self.sectors[downright]
+                    sector.corners[constants.DIRECTION_DOWN_RIGHT] = self.sectors[downright]
             
             if not i % 10 == 0: #not leftmost column
-                self.sectors[i].neighbors[constants.DIRECTION_LEFT] = self.sectors[i-1]
+                sector.neighbors[constants.DIRECTION_LEFT] = self.sectors[i-1]
         
         for i in self.wallsUp:
             self.sectors[i].neighbors[constants.DIRECTION_UP] = None
