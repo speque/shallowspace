@@ -99,7 +99,7 @@ class Map:
             dx = math.cos(i*0.01745)
             dy = math.sin(i*0.01745)
             litSectors = litSectors.union(self.determine_fov(charactor.sector, charactor.radius, dx, dy))
-            i += 3
+            i += 4
         ev = DimAllSectorsRequest()
         self.evManager.post(ev)
         ev = SectorsLitRequest(litSectors)

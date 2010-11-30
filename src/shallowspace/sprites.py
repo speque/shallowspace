@@ -15,15 +15,18 @@ class SectorSprite(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self, group)
         self.image = pygame.Surface((70,70))
         self.image = self.image.convert_alpha()
-        self.image.fill((0,0,0,100))
+        self.image.fill((0,0,0,235))
+        self.found = False
 
         self.sector = sector
         
     def dim(self):
-        self.image.fill((0,0,0,100))
+        if self.found:
+            self.image.fill((0,0,0,100))
         
     def lit(self):
         self.image.fill((0,0,0,0))
+        self.found = True
 #------------------------------------------------------------------------------
 class BulletSprite(pygame.sprite.Sprite):
     """ A class representing a sprite for a bullet """

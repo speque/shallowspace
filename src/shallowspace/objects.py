@@ -44,5 +44,5 @@ class Bullet:
     def __init__(self, shooter):
         self.sector = shooter.sector
         self.direction = shooter.direction
-        self.speed = 10
+        self.speed = 20
         self.age = 0
