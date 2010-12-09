@@ -4,18 +4,19 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
-import unittest
-import test_charactor
-import test_eventmanager
-import test_event_tester
-import test_map
+import os, sys, re, unittest
 
-if __name__=="__main__":
-    suites = []
-    suites.append(test_event_tester.suite())
-    suites.append(test_charactor.suite())
-    suites.append(test_eventmanager.suite())
-    suites.append(test_map.suite())
-    allTestSuites = unittest.TestSuite(suites)
+def regressionTest():
+    path = os.path.abspath(os.path.dirname(sys.argv[0]))
+    files = os.listdir(path)
+    test = re.compile("test.*\.py$", re.IGNORECASE)
+    files = filter(test.search, files)
+    filenameToModuleName = lambda f: os.path.splitext(f)[0]
+    moduleNames = map(filenameToModuleName, files)
+    modules = map(__import__, moduleNames)
+    load = unittest.defaultTestLoader.loadTestsFromModule
+    return unittest.TestSuite(map(load, modules))
+
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(allTestSuites)
+    runner.run(regressionTest())

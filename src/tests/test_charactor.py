@@ -8,8 +8,7 @@ import shallowspace.constants
 from event_tester import EventTester   
 from shallowspace.actors import Charactor
 from shallowspace.eventmanager import EventManager
-from shallowspace.game import Game
-from shallowspace.map import Sector
+from shallowspace.map import Map, Sector
 from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent, CharactorPlaceEvent
 
 class BasicTests(unittest.TestCase):
@@ -17,7 +16,6 @@ class BasicTests(unittest.TestCase):
     def setUp(self):
         em = EventManager()
         self.eventManager = em
-        self.game = Game(em)
         self.eventTester = EventTester()
         self.eventManager.register_listener(self.eventTester)
 
@@ -26,6 +24,7 @@ class BasicTests(unittest.TestCase):
         pass
         
     def testInit(self):
+        """Test character initialisation"""
         c = Charactor(self.eventManager)
         self.assertTrue(c in self.eventManager.listeners)
         self.assertEqual(c.sector, None)
@@ -55,22 +54,16 @@ class BasicTests(unittest.TestCase):
         self.assertTrue(isinstance(lastEvent, CharactorPlaceEvent))
         self.assertEqual(lastEvent.charactor, c)
 
-    def testMove(self):
+    def testSuccesfullMove(self):
         c = Charactor(self.eventManager)
-        map = self.game.map
-        map.build()
-        c.place(map.sectors[map.startSectorIndex])
-        c.move(shallowspace.constants.DIRECTION_RIGHT)
+        s = Sector()
+        c.place(s)
+        n = Sector()
+        s.neighbors[shallowspace.constants.DIRECTION_UP] = n 
+        c.move(shallowspace.constants.DIRECTION_UP)
         self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
-        c.move(shallowspace.constants.DIRECTION_DOWN) 
-        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
-        c.move(shallowspace.constants.DIRECTION_LEFT) 
-        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
-        c.move(shallowspace.constants.DIRECTION_UP) 
-        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
-        sec = map.sectors[map.startSectorIndex]
-        newSec = c.sector
-        self.assertEqual(map.sectors.index(sec), map.sectors.index(newSec))
+        self.assertEqual(c.sector, n)
+        
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(BasicTests)
