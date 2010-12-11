@@ -29,13 +29,19 @@ class GameStartedEvent(Event):
         self.game = game
 
 class CharactorMoveRequest(Event):
-    def __init__(self, direction):
+    def __init__(self, direction, force=False):
         self.name = "Charactor Move Request"
         self.direction = direction
+        self.force = force
 
 class CharactorTurnRequest(Event):
     def __init__(self, direction):
         self.name = "Charactor Turn Request"
+        self.direction = direction
+        
+class CharactorTurnAndMoveRequest(Event):
+    def __init__(self, direction):
+        self.name = "Charactor Turn and Move Request"
         self.direction = direction        
 
 class CharactorShootRequest(Event):
@@ -53,6 +59,11 @@ class CharactorMoveEvent(Event):
     def __init__(self, charactor):
         self.name = "Charactor Move Event"
         self.charactor = charactor
+        
+class CharactorMoveToRequest(Event):
+    def __init__(self, pos):
+        self.name = "Charactor Move To Request"
+        self.pos = pos        
         
 class CharactorTurnEvent(Event):
     def __init__(self, charactor):
@@ -92,3 +103,9 @@ class SectorsLitRequest(Event):
 class DimAllSectorsRequest(Event):
     def __init__(self):
         self.name = "Dim All Sectors Request"
+        
+class CalculatePathRequest(Event):
+    def __init__(self, start_sector, pos):
+        self.name = "Calculate Path Request"
+        self.start_sector = start_sector
+        self.pos = pos

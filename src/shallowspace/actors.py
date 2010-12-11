@@ -49,12 +49,21 @@ class Charactor:
             self.place(gameMap.sectors[gameMap.startSectorIndex])
         
         elif isinstance(event, CharactorMoveRequest):
-            if self.direction != event.direction:
+            if self.direction != event.direction and not event.force:
                 # turn instead of move
                 self.turn(event.direction)
             else:
                 # the charactor already faces that direction, let's move there
                 self.move(event.direction)
+                
+        elif isinstance(event, CharactorTurnAndMoveRequest):
+            if self.direction != event.direction:
+                self.turn(event.direction)
+            self.move(event.direction)
+                
+        elif isinstance(event, CharactorMoveToRequest):
+            ev = CalculatePathRequest(self.sector, event.pos)
+            self.evManager.post(ev)
                 
         elif isinstance(event, CharactorShootRequest):
                 self.shoot()

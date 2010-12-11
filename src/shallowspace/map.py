@@ -4,10 +4,11 @@ Created on Oct 31, 2010
 @author: pekka
 
 '''
-from event import MapBuiltEvent, SectorsLitRequest, CharactorMoveEvent, DimAllSectorsRequest, CharactorPlaceEvent
+from event import MapBuiltEvent, SectorsLitRequest, CharactorMoveEvent, CharactorTurnAndMoveRequest, \
+DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest
 import constants
 import math
-from utils import *
+from astar import a_star
 #------------------------------------------------------------------------------
 class Map:
     """..."""
@@ -32,7 +33,7 @@ class Map:
 
     #----------------------------------------------------------------------
     def build(self):
-        self.sectors = [Sector() for x in xrange(100)]
+        self.sectors = [Sector(x) for x in xrange(100)]
         
         for i, sector in enumerate(self.sectors):
             if i > 9: #not first row
@@ -140,10 +141,20 @@ class Map:
         if isinstance(event, CharactorMoveEvent) or isinstance(event, CharactorPlaceEvent):
             self.fov(event.charactor)
             
+        elif isinstance(event, CalculatePathRequest):
+            goal = self.sector_by_coordinates(event.pos[0]/70, event.pos[1]/70)
+            path = a_star(event.start_sector, goal, self)
+            path.append(goal)
+            for index, node in enumerate(path):
+                if index < len(path)-1:
+                    ev = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
+                    self.evManager.post(ev)  
+            
 #------------------------------------------------------------------------------
 class Sector:
     """..."""
-    def __init__(self):
+    def __init__(self, id=0):
+        self.id = id
         self.neighbors = range(4)
         self.corners = range(4)
 
