@@ -8,7 +8,7 @@ import shallowspace.constants
 from event_tester import EventTester   
 from shallowspace.actors import Charactor
 from shallowspace.eventmanager import EventManager
-from shallowspace.map import Map, Sector
+from shallowspace.map import Sector
 from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent, CharactorPlaceEvent
 
 class BasicTests(unittest.TestCase):
