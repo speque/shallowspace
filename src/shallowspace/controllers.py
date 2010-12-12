@@ -14,7 +14,7 @@ class KeyboardController:
     """..."""
     def __init__(self, evManager):
         self.evManager = evManager
-        self.evManager.register_listener( self )
+        self.evManager.register_listener(self)
 
     #----------------------------------------------------------------------
     def notify(self, event):
@@ -62,7 +62,7 @@ class CPUSpinnerController:
         while self.keepGoing:
             clock.tick(60)
             event = TickEvent()
-            self.evManager.post( event )
+            self.evManager.post(event)
 
     #----------------------------------------------------------------------
     def notify(self, event):
