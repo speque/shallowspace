@@ -24,7 +24,7 @@ class Map:
         self.state = Map.STATE_PREPARING
 
         self.sectors = None
-        self.startSectorIndex = 0
+        self.startSectorIndices = [0, 1, 2, 3]
         
         self.wallsUp = wallsUp
         self.wallsRight = wallsRight
@@ -142,7 +142,7 @@ class Map:
             self.fov(event.charactor)
             
         elif isinstance(event, CalculatePathRequest):
-            goal = self.sector_by_coordinates(event.pos[0]/70, event.pos[1]/70)
+            goal = self.sector_by_coordinates(event.pos[0]/constants.GRID_SIZE, event.pos[1]/constants.GRID_SIZE)
             path = a_star(event.start_sector, goal, self)
             path.append(goal)
             for index, node in enumerate(path):
