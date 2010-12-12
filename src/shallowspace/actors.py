@@ -3,17 +3,17 @@ Created on Oct 31, 2010
 
 @author: pekka
 '''
-
-from event import *
+from event import CharactorMoveEvent, CharactorTurnEvent, CharactorShootEvent, CharactorPlaceEvent
 import constants
 #------------------------------------------------------------------------------
 class Charactor:
     """Class representing a player controlled charactor 
     (misspelled to avoid confusion with textual characters)  """
     
-    def __init__(self, evManager):
+    def __init__(self, evManager, id=0):
         self.evManager = evManager
         self.evManager.register_listener(self)
+        self.id = id
         self.sector = None
         self.direction = constants.DIRECTION_DOWN
         self.radius = 2
@@ -43,27 +43,5 @@ class Charactor:
         self.evManager.post( ev )
         
     #----------------------------------------------------------------------
-    def notify(self, event):
-        if isinstance(event, GameStartedEvent):
-            gameMap = event.game.map
-            self.place(gameMap.sectors[gameMap.startSectorIndex])
-        
-        elif isinstance(event, CharactorMoveRequest):
-            if self.direction != event.direction and not event.force:
-                # turn instead of move
-                self.turn(event.direction)
-            else:
-                # the charactor already faces that direction, let's move there
-                self.move(event.direction)
-                
-        elif isinstance(event, CharactorTurnAndMoveRequest):
-            if self.direction != event.direction:
-                self.turn(event.direction)
-            self.move(event.direction)
-                
-        elif isinstance(event, CharactorMoveToRequest):
-            ev = CalculatePathRequest(self.sector, event.pos)
-            self.evManager.post(ev)
-                
-        elif isinstance(event, CharactorShootRequest):
-                self.shoot()
+    def notify(self, event):        
+        pass
