@@ -4,7 +4,7 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
-from event import *
+from event import BulletDestroyedEvent, BulletChangedSectorEvent, TickEvent, BulletsMoveEvent
 
 class Bullets:
     def __init__(self, evManager):
