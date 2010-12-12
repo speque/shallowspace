@@ -53,7 +53,7 @@ class BulletSprite(pygame.sprite.Sprite):
 class CharactorSprite(pygame.sprite.Sprite):
     """ A class representing a sprite for a charactor """
     
-    def __init__(self, group=None):
+    def __init__(self, group=None, charactorId=0):
         pygame.sprite.Sprite.__init__(self, group)
         
         marineSpriteFileName = constants.CONFIG.get('Images', 'marine')
@@ -66,6 +66,7 @@ class CharactorSprite(pygame.sprite.Sprite):
 
         self.moveTo = None
         self.turnTo = None
+        self.id = charactorId
 
     #----------------------------------------------------------------------
     def update(self):
