@@ -9,7 +9,6 @@ from sprites import CharactorSprite, SectorSprite, BulletSprite
 from event import *
 import constants
 import math
-from utils import *
 
 class PygameView:
     """A class representing the game view"""
@@ -49,7 +48,7 @@ class PygameView:
 
     #----------------------------------------------------------------------
     def show_charactor(self, charactor):
-        charactorSprite = CharactorSprite( self.frontSprites )
+        charactorSprite = CharactorSprite(self.frontSprites, charactor.id)
 
         sector = charactor.sector
         sectorSprite = self.get_sector_sprite( sector )
@@ -109,8 +108,7 @@ class PygameView:
     #----------------------------------------------------------------------
     def get_charactor_sprite(self, charactor):
         for s in self.frontSprites:
-            if isinstance(s, CharactorSprite):
-                #currently there is only one
+            if isinstance(s, CharactorSprite) and s.id == charactor.id:
                 return s
         return None
 
