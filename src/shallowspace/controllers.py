@@ -40,7 +40,7 @@ class KeyboardController:
                 elif event.type == KEYDOWN and event.key == K_RIGHT:
                     direction = constants.DIRECTION_RIGHT
                     ev = CharactorMoveRequest(direction)
-                elif event.type == MOUSEBUTTONUP:
+                elif event.type == MOUSEBUTTONUP and event.button == 1:
                     ev = CharactorMoveToRequest(event.pos)
 
                 if ev:
