@@ -42,6 +42,8 @@ class KeyboardController:
                     ev = CharactorMoveRequest(direction)
                 elif event.type == MOUSEBUTTONUP and event.button == 1:
                     ev = CharactorMoveToRequest(event.pos)
+                elif event.type == MOUSEBUTTONUP and event.button == 2:
+                    ev = ActiveCharactorChangeRequest(event.pos)
 
                 if ev:
                     self.evManager.post(ev)

@@ -7,7 +7,7 @@ Created on Oct 31, 2010
 from objects import Bullets
 from player import Player
 import constants
-from event import GameStartedEvent, TickEvent, CharactorShootEvent, BulletPlaceEvent, CharactorPlaceEvent
+from event import GameStartedEvent, TickEvent, CharactorShootEvent, BulletPlaceEvent, CharactorPlaceEvent, CharactorMoveEvent
 from map import Map
 import ConfigParser
 import os
@@ -26,9 +26,9 @@ class Game:
         self.state = Game.STATE_PREPARING
         
         self.idGenerator = ObjectIdGenerator()
-        #self.state = GameState()
+        self.gameState = GameState(evManager)
         
-        self.players = [Player(evManager, self.idGenerator)]
+        self.players = [Player(evManager, self.idGenerator, self.gameState)]
         
         programPath = os.path.dirname(__file__)
         confFilePath = os.path.abspath(os.path.join(programPath, "../../config/config.cfg"))
@@ -77,15 +77,14 @@ class GameState:
     """..."""
     def __init__(self, evManager):
         evManager.register_listener(self)
-        #map from actors to sectors
-        self.actors = []
+        self.occupiedSectorsByActorId = {}
     
     def sectorIsFree(self, sector):
-        blockedSectors = [c.sector for c in self.actors]
-        if sector in blockedSectors:
-            return False
-        return True
+        if sector not in self.occupiedSectorsByActorId.values():
+            return True
+        return False
         
     def notify(self, event):
-        if isinstance(event, CharactorPlaceEvent):
-            self.actors.append(event.charactor)
+        if isinstance(event, CharactorPlaceEvent) or isinstance(event, CharactorMoveEvent):
+            self.occupiedSectorsByActorId[event.charactor.id] = event.charactor.sector
+            

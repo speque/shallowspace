@@ -4,7 +4,7 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
-DEBUG = False
+DEBUG = True
 
 def debug(msg):
     if DEBUG:
