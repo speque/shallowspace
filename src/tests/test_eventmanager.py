@@ -14,14 +14,14 @@ class BasicTests(unittest.TestCase):
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
-        self.assertTrue(et in ev.listeners)
+        self.assertTrue(et in ev.listenerGroups["default"].listeners)
         
     def testUnregister(self):
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
         ev.unregister_listener(et)
-        self.assertFalse(et in ev.listeners)
+        self.assertFalse(et in ev.listenerGroups["default"].listeners)
         
     def testPost(self):
         ev = EventManager()

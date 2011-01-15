@@ -4,7 +4,7 @@ Created on Nov 14, 2010
 @author: pekka
 '''
 import unittest
-from shallowspace.map import *
+from shallowspace.map import Sector
 from shallowspace.constants import *
 
 class SectorTests(unittest.TestCase):
