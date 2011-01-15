@@ -35,7 +35,7 @@ def a_star(start, goal, map):
         closedset.add(x)
         
         for y in x.neighbors:
-            if y == None or y in closedset:
+            if y == None or y in closedset or not map.mapState.sectorIsFree(y):
                 continue
             tentative_g_score = g_score[x.id] + 1      # 1 = distance between x and y
  

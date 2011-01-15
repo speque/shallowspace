@@ -7,7 +7,7 @@ Created on Oct 31, 2010
 from objects import Bullets
 from player import Player
 import constants
-from event import GameStartedEvent, TickEvent, CharactorShootEvent, BulletPlaceEvent, CharactorPlaceEvent, CharactorMoveEvent
+from event import GameStartedEvent, TickEvent, CharactorShootEvent, BulletPlaceEvent
 from map import Map
 import ConfigParser
 import os
@@ -26,9 +26,8 @@ class Game:
         self.state = Game.STATE_PREPARING
         
         self.idGenerator = ObjectIdGenerator()
-        self.gameState = GameState(evManager)
         
-        self.players = [Player(evManager, self.idGenerator, self.gameState)]
+        self.players = [Player(evManager, self.idGenerator)]
         
         programPath = os.path.dirname(__file__)
         confFilePath = os.path.abspath(os.path.join(programPath, "../../config/config.cfg"))
@@ -71,20 +70,3 @@ class ObjectIdGenerator:
         id = self.nextId
         self.nextId = self.nextId + 1
         return id
-    
-    
-class GameState:
-    """..."""
-    def __init__(self, evManager):
-        evManager.register_listener(self)
-        self.occupiedSectorsByActorId = {}
-    
-    def sectorIsFree(self, sector):
-        if sector not in self.occupiedSectorsByActorId.values():
-            return True
-        return False
-        
-    def notify(self, event):
-        if isinstance(event, CharactorPlaceEvent) or isinstance(event, CharactorMoveEvent):
-            self.occupiedSectorsByActorId[event.charactor.id] = event.charactor.sector
-            

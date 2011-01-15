@@ -5,7 +5,8 @@ Created on Oct 31, 2010
 
 '''
 from event import MapBuiltEvent, SectorsLitRequest, CharactorMoveEvent, CharactorTurnAndMoveRequest, \
-DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest
+DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest, ActiveCharactorChangeCheckRequest, ActiveCharactorChangeRequest, \
+FreeSectorActionRequest, ActiveCharactorChangeEvent
 import constants
 import math
 from astar import a_star
@@ -25,6 +26,8 @@ class Map:
 
         self.sectors = None
         self.startSectorIndices = [0, 1, 2, 3]
+        
+        self.mapState = MapState(evManager)
         
         self.wallsUp = wallsUp
         self.wallsRight = wallsRight
@@ -135,20 +138,35 @@ class Map:
             index = int(math.floor(y)*10.0+math.floor(x))
             if index > -1:
                 return self.sectors[index]
+            
+    def charactorByCoordinates(self, x, y):
+        sector = self.sector_by_coordinates(x/constants.GRID_SIZE, y/constants.GRID_SIZE)
+        if sector == None or self.mapState.sectorIsFree(sector):
+            return None
+        else:
+            return self.mapState.actorsBySectorId.get(sector.id, -1)
     
     #----------------------------------------------------------------------
     def notify(self, event):
-        if isinstance(event, CharactorMoveEvent) or isinstance(event, CharactorPlaceEvent):
+        if isinstance(event, CharactorMoveEvent) or isinstance(event, CharactorPlaceEvent) or isinstance(event, ActiveCharactorChangeEvent):
             self.fov(event.charactor)
             
         elif isinstance(event, CalculatePathRequest):
             goal = self.sector_by_coordinates(event.pos[0]/constants.GRID_SIZE, event.pos[1]/constants.GRID_SIZE)
             path = a_star(event.start_sector, goal, self)
-            path.append(goal)
-            for index, node in enumerate(path):
-                if index < len(path)-1:
-                    ev = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
-                    self.evManager.post(ev)  
+            if not path == None:
+                path.append(goal)
+                for index, node in enumerate(path):
+                    if index < len(path)-1:
+                        ev = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
+                        self.evManager.post(ev)
+        
+        elif isinstance(event, ActiveCharactorChangeCheckRequest):
+            charactor = self.charactorByCoordinates(event.pos[0], event.pos[1])
+            if not charactor == None:
+                ev = ActiveCharactorChangeRequest(charactor)
+                self.evManager.post(ev)
+          
             
 #------------------------------------------------------------------------------
 class Sector:
@@ -174,3 +192,26 @@ class Sector:
             return 1
         else:
             return 0
+
+class MapState:
+    """..."""
+    def __init__(self, evManager):
+        self.evManager = evManager
+        evManager.register_listener(self)
+        self.occupiedSectorsByActorId = {}
+        self.actorsBySectorId = {}
+    
+    def sectorIsFree(self, sector):
+        if sector not in self.occupiedSectorsByActorId.values():
+            return True
+        return False
+    
+    def notify(self, event):
+        if isinstance(event, CharactorPlaceEvent) or isinstance(event, CharactorMoveEvent):
+            self.occupiedSectorsByActorId[event.charactor.id] = event.charactor.sector
+            self.actorsBySectorId[event.charactor.sector.id] = event.charactor
+
+        elif isinstance(event, FreeSectorActionRequest):
+            if self.sectorIsFree(event.sector):
+                event.f(True)
+            

@@ -20,8 +20,8 @@ class EventManager:
 
     def unregister_listener(self, listener):
         for group in self.listenerGroups:
-            if listener in group.listeners:
-                del self.listeners[listener]
+            if listener in self.listenerGroups[group].listeners:
+                del self.listenerGroups[group].listeners[listener]
             
     def post(self, event, groups=[]):
         if not isinstance(event, TickEvent):

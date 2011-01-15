@@ -109,8 +109,24 @@ class CalculatePathRequest(Event):
         self.name = "Calculate Path Request"
         self.start_sector = start_sector
         self.pos = pos
+
+class ActiveCharactorChangeCheckRequest(Event):
+    def __init__(self, pos):
+        self.name = "Active Charactor Change Check Request"
+        self.pos = pos
         
 class ActiveCharactorChangeRequest(Event):
-    def __init__(self, pos):
+    def __init__(self, charactor):
         self.name = "Active Charactor Change Request"
-        self.pos = pos
+        self.charactor = charactor
+
+class ActiveCharactorChangeEvent(Event):
+    def __init__(self, charactor):
+        self.name = "Active Charactor Change Event"
+        self.charactor = charactor
+        
+class FreeSectorActionRequest(Event):
+    def __init__(self, sector, f):
+        self.name = "Free Sector Action Request"
+        self.sector = sector
+        self.f = f
