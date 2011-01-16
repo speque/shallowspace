@@ -212,6 +212,5 @@ class MapState:
             self.actorsBySectorId[event.charactor.sector.id] = event.charactor
 
         elif isinstance(event, FreeSectorActionRequest):
-            if self.sectorIsFree(event.sector):
-                event.f(True)
+            event.f(self.sectorIsFree(event.sector))
             
