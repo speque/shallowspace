@@ -9,7 +9,7 @@ from pygameview import PygameView
 from eventmanager import EventManager
 from controllers import KeyboardController, CPUSpinnerController
 import argparse
-from constants import DEBUG
+import constants
 
 #------------------------------------------------------------------------------
 def main():
@@ -20,8 +20,8 @@ def main():
        default=False, help='turn on debug')
 
     args = parser.parse_args()
-    
-    DEBUG = args.debug
+    print args.debug
+    constants.DEBUG = args.debug
 
     evManager = EventManager()
 

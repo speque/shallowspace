@@ -4,8 +4,8 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
-from constants import DEBUG 
+import constants 
 
 def debug(msg):
-    if DEBUG:
+    if constants.DEBUG:
         print msg
