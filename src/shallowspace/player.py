@@ -40,7 +40,7 @@ class Player:
                 self.active_charactor.shoot()
                 
             elif isinstance(event, ActiveCharactorChangeRequest):
-                if event.charactor in self.charactors:
+                if event.charactor in self.charactors and not event.charactor == self.active_charactor:
                     self.active_charactor = event.charactor
                     ev = ActiveCharactorChangeEvent(self.active_charactor)
                     self.active_charactor.evManager.post(ev)
