@@ -4,6 +4,8 @@ Created on Oct 31, 2010
 @author: pekka
 '''
 
+DEBUG = False
+
 DIRECTION_UP = 0
 DIRECTION_RIGHT = 1
 DIRECTION_DOWN = 2
