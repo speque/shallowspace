@@ -20,7 +20,7 @@ def main():
        default=False, help='turn on debug')
 
     args = parser.parse_args()
-    print args.debug
+
     constants.DEBUG = args.debug
 
     evManager = EventManager()
