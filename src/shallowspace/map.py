@@ -189,12 +189,12 @@ class Sector:
     #----------------------------------------------------------------------
     def move_possible(self, direction):
         if self.neighbors[direction]:
-            return 1
+            return True
         else:
-            return 0
+            return False
 
 class MapState:
-    """..."""
+    """Keeps record of occupied sectors and actors occupying them"""
     def __init__(self, evManager):
         self.evManager = evManager
         evManager.register_listener(self)
