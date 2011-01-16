@@ -20,7 +20,6 @@ class BasicTests(unittest.TestCase):
         ev = Event()
         et.notify(ev)
         self.assertEqual(et.check_last_event(), ev)
-        self.assertEqual(et.check_last_event(), None)
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(BasicTests)

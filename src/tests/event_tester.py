@@ -8,5 +8,5 @@ class EventTester():
     def check_last_event(self):
         """The tester should return the last event posted"""
         result = self.lastEvent
-        self.lastEvent = None
+        #self.lastEvent = None
         return result
