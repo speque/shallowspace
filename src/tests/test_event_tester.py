@@ -10,12 +10,14 @@ from shallowspace.event import Event
 class BasicTests(unittest.TestCase):
 
     def testNotify(self):
+        """Test notifying"""
         et = EventTester()
         ev = Event()
         et.notify(ev)
         self.assertEqual(ev, et.lastEvent)
         
     def testCheckLastEvent(self):
+        """Test checking the last event"""
         et = EventTester()
         ev = Event()
         et.notify(ev)

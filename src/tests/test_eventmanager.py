@@ -11,12 +11,14 @@ from event_tester import EventTester
 class BasicTests(unittest.TestCase):
 
     def testRegister(self):
+        """Test registering a listener"""
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
         self.assertTrue(et in ev.listenerGroups["default"].listeners)
         
     def testUnregister(self):
+        """Test unregistering a listener"""
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
@@ -24,6 +26,7 @@ class BasicTests(unittest.TestCase):
         self.assertFalse(et in ev.listenerGroups["default"].listeners)
         
     def testPost(self):
+        """Test posting an event"""
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
