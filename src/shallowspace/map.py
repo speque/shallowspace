@@ -5,8 +5,8 @@ Created on Oct 31, 2010
 
 '''
 from event import MapBuiltEvent, SectorsLitRequest, CharactorMoveEvent, CharactorTurnAndMoveRequest, \
-DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest, ActiveCharactorChangeCheckRequest, ActiveCharactorChangeRequest, \
-FreeSectorActionRequest, ActiveCharactorChangeEvent
+DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest, OccupiedSectorAction, ActiveCharactorChangeRequest, \
+FreeSectorAction, ActiveCharactorChangeEvent
 import constants
 import math
 from astar import a_star
@@ -161,11 +161,8 @@ class Map:
                         ev = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
                         self.evManager.post(ev)
         
-        elif isinstance(event, ActiveCharactorChangeCheckRequest):
-            charactor = self.charactorByCoordinates(event.pos[0], event.pos[1])
-            if not charactor == None:
-                ev = ActiveCharactorChangeRequest(charactor)
-                self.evManager.post(ev)
+        elif isinstance(event, OccupiedSectorAction):
+            event.f(self.charactorByCoordinates(event.pos[0], event.pos[1]))
           
             
 #------------------------------------------------------------------------------
@@ -211,6 +208,6 @@ class MapState:
             self.occupiedSectorsByActorId[event.charactor.id] = event.charactor.sector
             self.actorsBySectorId[event.charactor.sector.id] = event.charactor
 
-        elif isinstance(event, FreeSectorActionRequest):
+        elif isinstance(event, FreeSectorAction):
             event.f(self.sectorIsFree(event.sector))
             

@@ -6,8 +6,8 @@ Created on Dec 11, 2010
 
 from actors import Charactor
 from event import GameStartedEvent, CharactorMoveRequest, CharactorTurnAndMoveRequest, CharactorMoveToRequest, \
-CalculatePathRequest, CharactorShootRequest, ActiveCharactorChangeRequest, TickEvent, FreeSectorActionRequest, \
-ActiveCharactorChangeEvent
+CalculatePathRequest, CharactorShootRequest, ActiveCharactorChangeRequest, TickEvent, FreeSectorAction, \
+ActiveCharactorChangeEvent, OccupiedSectorAction
 
 class Player:
     """..."""
@@ -40,10 +40,15 @@ class Player:
                 self.active_charactor.shoot()
                 
             elif isinstance(event, ActiveCharactorChangeRequest):
-                if event.charactor in self.charactors and not event.charactor == self.active_charactor:
-                    self.active_charactor = event.charactor
-                    ev = ActiveCharactorChangeEvent(self.active_charactor)
-                    self.active_charactor.evManager.post(ev)
+                def ChangeActiveCharactor(c):
+                    if not c == None and c in self.charactors and not c == self.active_charactor:
+                        self.active_charactor = c
+                        ev = ActiveCharactorChangeEvent(self.active_charactor)
+                        self.active_charactor.evManager.post(ev)
+                        
+                f = ChangeActiveCharactor
+                ev = OccupiedSectorAction(event.pos, f)
+                self.evManager.post(ev)
                         
             elif isinstance(event, CharactorMoveRequest) or isinstance(event, CharactorTurnAndMoveRequest):
                 
@@ -58,7 +63,7 @@ class Player:
                     else:
                         # the charactor already faces that direction, let's move there, if the sector is free
                         f = MoveIfPossible
-                        ev = FreeSectorActionRequest(self.active_charactor.sector.neighbors[event.direction], f)
+                        ev = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], f)
                         self.evManager.post(ev)
                         
                 elif isinstance(event, CharactorTurnAndMoveRequest):
@@ -66,6 +71,6 @@ class Player:
                         self.active_charactor.turn(event.direction)
                     
                     f = MoveIfPossible
-                    ev = FreeSectorActionRequest(self.active_charactor.sector.neighbors[event.direction], f)
+                    ev = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], f)
                     self.evManager.post(ev)
                         

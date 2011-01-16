@@ -43,7 +43,7 @@ class KeyboardController:
                 elif event.type == MOUSEBUTTONUP and event.button == 1:
                     ev = CharactorMoveToRequest(event.pos)
                 elif event.type == MOUSEBUTTONUP and event.button == 3:
-                    ev = ActiveCharactorChangeCheckRequest(event.pos)
+                    ev = ActiveCharactorChangeRequest(event.pos)
 
                 if ev:
                     self.evManager.post(ev)
