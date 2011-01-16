@@ -16,7 +16,7 @@ def main():
     """Main program to start the game"""
     
     parser = argparse.ArgumentParser(description='Shallow Space')
-    parser.add_argument('--debug', dest='debug', action='store_true',
+    parser.add_argument('-d', '--debug', dest='debug', action='store_true',
        default=False, help='turn on debug')
 
     args = parser.parse_args()
