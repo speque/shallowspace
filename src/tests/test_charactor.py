@@ -19,7 +19,6 @@ class BasicTests(unittest.TestCase):
         self.eventTester = EventTester()
         self.eventManager.register_listener(self.eventTester)
 
-
     def tearDown(self):
         pass
         
@@ -28,9 +27,12 @@ class BasicTests(unittest.TestCase):
         c = Charactor(self.eventManager)
         self.assertTrue(c in self.eventManager.listenerGroups["default"].listeners)
         self.assertEqual(c.sector, None)
+        self.assertEqual(c.id, 0)
+        self.assertEqual(c.radius, 2)
         self.assertEqual(c.direction, shallowspace.constants.DIRECTION_DOWN)
 
     def testTurn(self):
+        """Test turning"""
         c = Charactor(self.eventManager)
         c.turn(shallowspace.constants.DIRECTION_RIGHT)
         self.assertEqual(c.direction, shallowspace.constants.DIRECTION_RIGHT)
@@ -38,8 +40,8 @@ class BasicTests(unittest.TestCase):
         self.assertTrue(isinstance(lastEvent, CharactorTurnEvent))
         self.assertEqual(lastEvent.charactor, c)
         
-
     def testShoot(self):
+        """Test shooting"""
         c = Charactor(self.eventManager)
         c.shoot()
         lastEvent = self.eventTester.check_last_event()
@@ -47,6 +49,7 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(lastEvent.charactor, c)
 
     def testPlace(self):
+        """Test placing"""
         c = Charactor(self.eventManager)
         s = Sector()
         c.place(s)
@@ -55,6 +58,7 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(lastEvent.charactor, c)
 
     def testSuccesfullMove(self):
+        """Test moving to a non-blocked direction"""
         c = Charactor(self.eventManager)
         s = Sector()
         c.place(s)
@@ -64,6 +68,15 @@ class BasicTests(unittest.TestCase):
         self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
         self.assertEqual(c.sector, n)
         
+    def testUnsuccesfullMove(self):
+        """Test moving to a blocked direction"""
+        c = Charactor(self.eventManager)
+        s = Sector()
+        c.place(s)
+        e = self.eventTester.check_last_event()
+        c.move(shallowspace.constants.DIRECTION_UP)
+        self.assertEqual(self.eventTester.check_last_event(), e)
+        self.assertEqual(c.sector, s)
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(BasicTests)
