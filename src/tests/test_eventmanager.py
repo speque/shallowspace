@@ -34,9 +34,5 @@ class BasicTests(unittest.TestCase):
         ev.post(event)
         self.assertEqual(et.check_last_event(), event)
 
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(BasicTests)
-    return suite
-
 if __name__ == "__main__":
     unittest.main()

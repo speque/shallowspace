@@ -78,10 +78,5 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(self.eventTester.check_last_event(), e)
         self.assertEqual(c.sector, s)
 
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(BasicTests)
-    return suite
-
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

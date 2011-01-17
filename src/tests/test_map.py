@@ -5,7 +5,7 @@ Created on Nov 14, 2010
 '''
 import unittest
 from shallowspace.eventmanager import EventManager
-from shallowspace.event import CharactorPlaceEvent, FreeSectorActionRequest
+from shallowspace.event import CharactorPlaceEvent, FreeSectorAction
 from shallowspace.map import Sector, MapState
 from shallowspace.constants import *
 from shallowspace.actors import Charactor
@@ -16,12 +16,12 @@ class MapTests(unittest.TestCase):
 class MapStateTests(unittest.TestCase):
     
     def setUp(self):
-        em = EventManager()
-        self.eventManager = em
+        self.eventManager = EventManager()
     
     def testInit(self):
         """Test map state initalisation"""
         ms = MapState(self.eventManager)
+        self.assertEqual(ms.evManager, self.eventManager)
         self.assertTrue(ms in self.eventManager.listenerGroups["default"].listeners)
         self.assertEqual(ms.occupiedSectorsByActorId, {})
         self.assertEqual(ms.actorsBySectorId, {})
@@ -46,7 +46,7 @@ class MapStateTests(unittest.TestCase):
             if sectorIsFree:
                 self.actionExecuted = True
         f = function
-        ev = FreeSectorActionRequest(s, f)
+        ev = FreeSectorAction(s, f)
         self.eventManager.post(ev)
         self.assertTrue(self.actionExecuted)
         
@@ -85,11 +85,6 @@ class SectorTests(unittest.TestCase):
         self.assertTrue(s.move_possible(DIRECTION_RIGHT))
         self.assertTrue(s.move_possible(DIRECTION_DOWN))
         self.assertTrue(s.move_possible(DIRECTION_LEFT))
-        
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(SectorTests)
-    return suite
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
