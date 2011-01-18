@@ -27,7 +27,7 @@ class MapStateTests(unittest.TestCase):
         self.assertEqual(ms.actorsBySectorId, {})
         
     def testCharactorPlaceNotification(self):
-        """Test Charactor Place Notification"""
+        """Test charactor place notification"""
         ms = MapState(self.eventManager)
         c = Charactor(self.eventManager)
         c.sector = Sector()

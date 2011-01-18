@@ -14,14 +14,14 @@ class BasicTests(unittest.TestCase):
         et = EventTester()
         ev = Event()
         et.notify(ev)
-        self.assertEqual(ev, et.lastEvent)
+        self.assertEqual(ev, et.last_event())
         
     def testCheckLastEvent(self):
         """Test checking the last event"""
         et = EventTester()
         ev = Event()
         et.notify(ev)
-        self.assertEqual(et.check_last_event(), ev)
+        self.assertEqual(et.last_event(), ev)
 
 if __name__ == "__main__":
     unittest.main()

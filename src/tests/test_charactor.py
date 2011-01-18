@@ -36,7 +36,7 @@ class BasicTests(unittest.TestCase):
         c = Charactor(self.eventManager)
         c.turn(shallowspace.constants.DIRECTION_RIGHT)
         self.assertEqual(c.direction, shallowspace.constants.DIRECTION_RIGHT)
-        lastEvent = self.eventTester.check_last_event()
+        lastEvent = self.eventTester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorTurnEvent))
         self.assertEqual(lastEvent.charactor, c)
         
@@ -44,7 +44,7 @@ class BasicTests(unittest.TestCase):
         """Test shooting"""
         c = Charactor(self.eventManager)
         c.shoot()
-        lastEvent = self.eventTester.check_last_event()
+        lastEvent = self.eventTester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorShootEvent))
         self.assertEqual(lastEvent.charactor, c)
 
@@ -53,7 +53,7 @@ class BasicTests(unittest.TestCase):
         c = Charactor(self.eventManager)
         s = Sector()
         c.place(s)
-        lastEvent = self.eventTester.check_last_event()
+        lastEvent = self.eventTester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorPlaceEvent))
         self.assertEqual(lastEvent.charactor, c)
 
@@ -65,7 +65,7 @@ class BasicTests(unittest.TestCase):
         n = Sector()
         s.neighbors[shallowspace.constants.DIRECTION_UP] = n 
         c.move(shallowspace.constants.DIRECTION_UP)
-        self.assertTrue(isinstance(self.eventTester.check_last_event(), CharactorMoveEvent))
+        self.assertTrue(isinstance(self.eventTester.last_event(), CharactorMoveEvent))
         self.assertEqual(c.sector, n)
         
     def testUnsuccesfullMove(self):
@@ -73,9 +73,9 @@ class BasicTests(unittest.TestCase):
         c = Charactor(self.eventManager)
         s = Sector()
         c.place(s)
-        e = self.eventTester.check_last_event()
+        e = self.eventTester.last_event()
         c.move(shallowspace.constants.DIRECTION_UP)
-        self.assertEqual(self.eventTester.check_last_event(), e)
+        self.assertEqual(self.eventTester.last_event(), e)
         self.assertEqual(c.sector, s)
 
 if __name__ == "__main__":

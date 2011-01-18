@@ -32,7 +32,7 @@ class BasicTests(unittest.TestCase):
         ev.register_listener(et)
         event = Event()
         ev.post(event)
-        self.assertEqual(et.check_last_event(), event)
+        self.assertEqual(et.last_event(), event)
 
 if __name__ == "__main__":
     unittest.main()
