@@ -5,8 +5,8 @@ Created on Oct 31, 2010
 
 '''
 from event import MapBuiltEvent, SectorsLitRequest, CharactorMoveEvent, CharactorTurnAndMoveRequest, \
-DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest, OccupiedSectorAction, ActiveCharactorChangeRequest, \
-FreeSectorAction, ActiveCharactorChangeEvent
+DimAllSectorsRequest, CharactorPlaceEvent, CalculatePathRequest, OccupiedSectorAction, \
+FreeSectorAction, ActiveCharactorChangeEvent, CharactorPlaceRequest
 import constants
 import math
 from astar import a_star
@@ -25,7 +25,7 @@ class Map:
         self.state = Map.STATE_PREPARING
 
         self.sectors = None
-        self.startSectorIndices = [0, 1, 2, 3]
+        self.freeStartSectorIndices = [0, 1, 2, 3]
         
         self.mapState = MapState(evManager)
         
@@ -163,6 +163,10 @@ class Map:
         
         elif isinstance(event, OccupiedSectorAction):
             event.f(self.charactorByCoordinates(event.pos[0], event.pos[1]))
+            
+        elif isinstance(event, CharactorPlaceRequest):
+            if not len(self.freeStartSectorIndices) == 0:
+                event.charactor.place(self.sectors[self.freeStartSectorIndices.pop(0)])
           
             
 #------------------------------------------------------------------------------

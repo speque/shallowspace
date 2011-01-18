@@ -47,7 +47,7 @@ class Game:
     def start(self):
         self.map.build()
         self.state = Game.STATE_RUNNING
-        ev = GameStartedEvent( self )
+        ev = GameStartedEvent()
         self.evManager.post( ev )
 
     def notify(self, event):

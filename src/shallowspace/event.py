@@ -24,9 +24,8 @@ class MapBuiltEvent(Event):
         self.map = gameMap
 
 class GameStartedEvent(Event):
-    def __init__(self, game):
+    def __init__(self):
         self.name = "Game Started Event"
-        self.game = game
 
 class CharactorMoveRequest(Event):
     def __init__(self, direction, force=False):
@@ -47,6 +46,11 @@ class CharactorTurnAndMoveRequest(Event):
 class CharactorShootRequest(Event):
     def __init__(self):
         self.name = "Charactor Shoot Request"    
+
+class CharactorPlaceRequest(Event):
+    def __init__(self, charactor):
+        self.name = "Charactor Place Request"
+        self.charactor = charactor
         
 class CharactorPlaceEvent(Event):
     """this event occurs when a Charactor is *placed* in a sector,
