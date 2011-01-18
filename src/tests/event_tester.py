@@ -1,9 +1,12 @@
 class EventTester():
     def __init__(self):
-        self.lastEvent = None
+        self.events = []
     
     def notify(self, event):
-        self.lastEvent = event
+        self.events.append(event)
         
-    def check_last_event(self):
-        return self.lastEvent
+    def last_n_events(self, n):
+        return self.events[:n]
+    
+    def last_event(self):
+        return self.events[len(self.events)-1] #TODO better syntax??
