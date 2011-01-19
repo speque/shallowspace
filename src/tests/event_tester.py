@@ -9,4 +9,7 @@ class EventTester():
         return self.events[:n]
     
     def last_event(self):
-        return self.events[len(self.events)-1] #TODO better syntax??
+        return self.events[-1]
+    
+    def clear(self):
+        self.events = []
