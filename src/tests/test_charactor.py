@@ -25,9 +25,9 @@ class BasicTests(unittest.TestCase):
     def testInit(self):
         """Test character initialisation"""
         c = Charactor(self.eventManager)
-        self.assertTrue(c in self.eventManager.listenerGroups["default"].listeners)
+        self.assertTrue(c in self.eventManager.listener_groups["default"].listeners)
         self.assertEqual(c.sector, None)
-        self.assertEqual(c.id, 0)
+        self.assertEqual(c.charactor_id, 0)
         self.assertEqual(c.radius, 2)
         self.assertEqual(c.direction, shallowspace.constants.DIRECTION_DOWN)
 

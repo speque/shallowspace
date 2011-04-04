@@ -15,7 +15,7 @@ class BasicTests(unittest.TestCase):
         ev = EventManager()
         et = EventTester()
         ev.register_listener(et)
-        self.assertTrue(et in ev.listenerGroups["default"].listeners)
+        self.assertTrue(et in ev.listener_groups["default"].listeners)
         
     def testUnregister(self):
         """Test unregistering a listener"""
@@ -23,7 +23,7 @@ class BasicTests(unittest.TestCase):
         et = EventTester()
         ev.register_listener(et)
         ev.unregister_listener(et)
-        self.assertFalse(et in ev.listenerGroups["default"].listeners)
+        self.assertFalse(et in ev.listener_groups["default"].listeners)
         
     def testPost(self):
         """Test posting an event"""

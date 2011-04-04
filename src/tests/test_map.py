@@ -21,10 +21,10 @@ class MapStateTests(unittest.TestCase):
     def testInit(self):
         """Test map state initalisation"""
         ms = MapState(self.eventManager)
-        self.assertEqual(ms.evManager, self.eventManager)
-        self.assertTrue(ms in self.eventManager.listenerGroups["default"].listeners)
-        self.assertEqual(ms.occupiedSectorsByActorId, {})
-        self.assertEqual(ms.actorsBySectorId, {})
+        self.assertEqual(ms.event_manager, self.eventManager)
+        self.assertTrue(ms in self.eventManager.listener_groups["default"].listeners)
+        self.assertEqual(ms.occupied_sectors_by_actor_id, {})
+        self.assertEqual(ms.actors_by_sector_id, {})
         
     def testCharactorPlaceNotification(self):
         """Test charactor place notification"""
@@ -33,8 +33,8 @@ class MapStateTests(unittest.TestCase):
         c.sector = Sector()
         cpe = CharactorPlaceEvent(c)
         self.eventManager.post(cpe)
-        self.assertEqual(ms.actorsBySectorId[c.sector.id], c)
-        self.assertEqual(ms.occupiedSectorsByActorId[c.id], c.sector)
+        self.assertEqual(ms.actors_by_sector_id[c.sector.charactor_id], c)
+        self.assertEqual(ms.occupied_sectors_by_actor_id[c.charactor_id], c.sector)
         
     def testFreeSectorActionNotification(self):
         """Test free section action notification"""
@@ -53,7 +53,7 @@ class MapStateTests(unittest.TestCase):
         self.actionExecuted = False
         c = Charactor(self.eventManager)
         c.sector = s
-        ms.occupiedSectorsByActorId[c.id] = c.sector
+        ms.occupied_sectors_by_actor_id[c.charactor_id] = c.sector
         self.eventManager.post(ev)
         self.assertFalse(self.actionExecuted)
 

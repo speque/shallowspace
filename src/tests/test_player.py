@@ -30,10 +30,10 @@ class PlayerTests(unittest.TestCase):
     def testInit(self):
         """Test player initialisation"""
         p = Player(self.eventManager, self.idManager)
-        self.assertEqual(p.evManager, self.eventManager)
+        self.assertEqual(p.event_manager, self.eventManager)
         self.assertEqual(p.game, None)
         self.assertEqual(p.name, "")
-        self.assertTrue(p in self.eventManager.listenerGroups["default"].listeners)
+        self.assertTrue(p in self.eventManager.listener_groups["default"].listeners)
         for c in p.charactors:
             self.assertTrue(isinstance(c, Charactor))
             #TODO check id
@@ -68,8 +68,8 @@ class PlayerTests(unittest.TestCase):
         p.notify(ev)
         self.assertTrue(isinstance(self.evt.last_event(), OccupiedSectorAction))
         self.assertEqual(None, self.evt.last_event().pos)
-        self.assertTrue(type(self.evt.last_event().f) is FunctionType)
-        #TODO check for f
+        self.assertTrue(type(self.evt.last_event().function) is FunctionType)
+        #TODO check for function
 
 if __name__ == "__main__":
     unittest.main()
