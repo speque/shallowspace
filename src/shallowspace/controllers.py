@@ -6,68 +6,70 @@ Created on Oct 31, 2010
 
 import pygame
 import constants
-from pygame.locals import *
-from event import *
+from pygame.locals import KEYDOWN, QUIT, K_ESCAPE, K_SPACE, K_UP, K_DOWN, K_RIGHT, K_LEFT, \
+MOUSEBUTTONUP
+from event import TickEvent, QuitEvent, CharactorShootRequest, CharactorMoveRequest, \
+CharactorMoveToRequest, ActiveCharactorChangeRequest
 
 #------------------------------------------------------------------------------
 class KeyboardController:
     """..."""
-    def __init__(self, evManager):
-        self.evManager = evManager
-        self.evManager.register_listener(self)
+    def __init__(self, event_manager):
+        self.event_manager = event_manager
+        self.event_manager.register_listener(self)
 
     #----------------------------------------------------------------------
     def notify(self, event):
         if isinstance( event, TickEvent ):
             #Handle Input Events
             for event in pygame.event.get():
-                ev = None
+                new_event = None
                 if event.type == QUIT:
-                    ev = QuitEvent()
+                    new_event = QuitEvent()
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                    ev = QuitEvent()
+                    new_event = QuitEvent()
                 elif event.type == KEYDOWN and event.key == K_SPACE:
-                    ev = CharactorShootRequest()
+                    new_event = CharactorShootRequest()
                 elif event.type == KEYDOWN and event.key == K_UP:
                     direction = constants.DIRECTION_UP
-                    ev = CharactorMoveRequest(direction)
+                    new_event = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN and event.key == K_DOWN:
                     direction = constants.DIRECTION_DOWN
-                    ev = CharactorMoveRequest(direction)
+                    new_event = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN and event.key == K_LEFT:
                     direction = constants.DIRECTION_LEFT
-                    ev = CharactorMoveRequest(direction)
+                    new_event = CharactorMoveRequest(direction)
                 elif event.type == KEYDOWN and event.key == K_RIGHT:
                     direction = constants.DIRECTION_RIGHT
-                    ev = CharactorMoveRequest(direction)
+                    new_event = CharactorMoveRequest(direction)
                 elif event.type == MOUSEBUTTONUP and event.button == 1:
-                    ev = CharactorMoveToRequest(event.pos)
+                    new_event = CharactorMoveToRequest(event.pos)
                 elif event.type == MOUSEBUTTONUP and event.button == 3:
-                    ev = ActiveCharactorChangeRequest(event.pos)
+                    new_event = ActiveCharactorChangeRequest(event.pos)
 
-                if ev:
-                    self.evManager.post(ev)
+                if new_event:
+                    self.event_manager.post(new_event)
 
 
 #------------------------------------------------------------------------------
 class CPUSpinnerController:
     """..."""
-    def __init__(self, evManager):
-        self.evManager = evManager
-        self.evManager.register_listener( self )
+    def __init__(self, event_manager):
+        self.event_manager = event_manager
+        self.event_manager.register_listener( self )
 
-        self.keepGoing = 1
+        self.keep_going = True
 
     #----------------------------------------------------------------------
     def run(self):
         clock = pygame.time.Clock()
-        while self.keepGoing:
+        while self.keep_going:
             clock.tick(60)
             event = TickEvent()
-            self.evManager.post(event)
+            self.event_manager.post(event)
 
     #----------------------------------------------------------------------
     def notify(self, event):
         if isinstance( event, QuitEvent ):
             #this will stop the while loop from running
-            self.keepGoing = False
+            self.keep_going = False

@@ -23,12 +23,12 @@ def main():
 
     constants.DEBUG = args.debug
 
-    evManager = EventManager()
+    event_manager = EventManager()
 
-    keybd = KeyboardController( evManager )
-    spinner = CPUSpinnerController( evManager )
-    game = Game( evManager )
-    pygameView = PygameView( evManager )
+    keyboard_controller = KeyboardController(event_manager)
+    spinner = CPUSpinnerController(event_manager)
+    game = Game(event_manager)
+    pygame_view = PygameView(event_manager)
     
     spinner.run()
 

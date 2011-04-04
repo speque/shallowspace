@@ -1,39 +1,41 @@
 from utils import debug
-from event import TickEvent
+from event import Event, TickEvent
 
 class EventManager:
     """this object is responsible for coordinating most communication
     between the Model, View, and Controller."""
 
     def __init__(self):
-        self.listenerGroups = {"default":ListenerGroup()}
+        self.listener_groups = {"default":ListenerGroup()}
 
-    def register_listener(self, listener, groups=[]):
+    def register_listener(self, listener, groups=None):
+        groups = groups or []
         if len(groups) == 0:
             groups = ["default"]
-        for groupName in groups:
-            if groupName in self.listenerGroups:     
-                self.listenerGroups[groupName].add_listener(listener)
+        for group_name in groups:
+            if group_name in self.listener_groups:     
+                self.listener_groups[group_name].add_listener(listener)
             else:
-                self.listenerGroups[groupName] = ListenerGroup()
-                self.listenerGroups[groupName].add_listener(listener)
+                self.listener_groups[group_name] = ListenerGroup()
+                self.listener_groups[group_name].add_listener(listener)
 
     def unregister_listener(self, listener):
-        for group in self.listenerGroups:
-            if listener in self.listenerGroups[group].listeners:
-                del self.listenerGroups[group].listeners[listener]
+        for group in self.listener_groups:
+            if listener in self.listener_groups[group].listeners:
+                del self.listener_groups[group].listeners[listener]
             
-    def post(self, event, groups=[]):
-        if not isinstance(event, TickEvent):
+    def post(self, event, groups=None):
+        groups = groups or []
+        if not isinstance(event, TickEvent) and not isinstance(event, Event):
             debug( "     Message: " + event.name )
             
-        for groupName in groups:
-            listenerGroup = self.listenerGroups[groupName].listeners
-            for listener in listenerGroup:
+        for group_name in groups:
+            listener_group = self.listener_groups[group_name].listeners
+            for listener in listener_group:
                 #NOTE: If the weakref has died, it will be automatically removed, so we don't have 
                 #to worry about it.
                 listener.notify(event)
-        for listener in self.listenerGroups["default"].listeners:
+        for listener in self.listener_groups["default"].listeners:
             listener.notify(event)
 
 class ListenerGroup:

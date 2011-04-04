@@ -6,67 +6,67 @@ Created on Dec 9, 2010
 
 import math
 
-def a_star(start, goal, map):
+def a_star(start, goal, game_map):
     closedset = set()                               # The set of nodes already evaluated.     
     openset =  set()                                # The set of tentative nodes to be evaluated.
     openset.add(start)
     came_from = {}
-    g_score = {}                                    #The map of navigated nodes.
+    g_score = {}                                    #The game_map of navigated nodes.
     h_score = {}
     f_score = {}
-    g_score[start.id] = 0                           # Distance from start along optimal path.
-    h_score[start.id] = heuristic_estimate_of_distance(map, start, goal)
-    f_score[start.id] = h_score[start.id]           # Estimated total distance from start to goal through y.
+    g_score[start.charactor_id] = 0                           # Distance from start along optimal path.
+    h_score[start.charactor_id] = heuristic_estimate_of_distance(game_map, start, goal)
+    f_score[start.charactor_id] = h_score[start.charactor_id]           # Estimated total distance from start to goal through neighbor.
     
     while not len(openset) == 0:
         lowest_f_score = 1000
-        x = None
+        candidate = None
         for sector in openset:
-            if f_score[sector.id] < lowest_f_score:
-                x = sector
-                lowest_f_score = f_score[sector.id]
-        if x == goal:
+            if f_score[sector.charactor_id] < lowest_f_score:
+                candidate = sector
+                lowest_f_score = f_score[sector.charactor_id]
+        if candidate == goal:
             if len(came_from) == 0:
                 return []
             else:
-                return reconstruct_path(came_from, came_from[goal.id])
+                return reconstruct_path(came_from, came_from[goal.charactor_id])
         
-        openset.remove(x)
-        closedset.add(x)
+        openset.remove(candidate)
+        closedset.add(candidate)
         
-        for y in x.neighbors:
-            if y == None or y in closedset or not map.mapState.sectorIsFree(y):
+        for neighbor in candidate.neighbors:
+            if neighbor == None or neighbor in closedset or not game_map.map_state.sector_is_free(neighbor):
                 continue
-            tentative_g_score = g_score[x.id] + 1      # 1 = distance between x and y
+            tentative_g_score = g_score[candidate.charactor_id] + 1      # 1 = distance between candidate and neighbor
  
-            if y not in openset:
-                openset.add(y)
+            if neighbor not in openset:
+                openset.add(neighbor)
                 tentative_is_better = True
-            elif tentative_g_score < g_score[y.id]:
+            elif tentative_g_score < g_score[neighbor.charactor_id]:
                 tentative_is_better = True
             else:
                 tentative_is_better = False
                 
             if tentative_is_better:
-                came_from[y.id] = x
-                g_score[y.id] = tentative_g_score
-                h_score[y.id] = heuristic_estimate_of_distance(map, y, goal)
-                f_score[y.id] = g_score[y.id] + h_score[y.id]
+                came_from[neighbor.charactor_id] = candidate
+                g_score[neighbor.charactor_id] = tentative_g_score
+                h_score[neighbor.charactor_id] = heuristic_estimate_of_distance(game_map, neighbor, goal)
+                f_score[neighbor.charactor_id] = g_score[neighbor.charactor_id] + h_score[neighbor.charactor_id]
     return None
  
 
  
 def reconstruct_path(came_from, current_node):
-    if current_node.id in came_from:
-        p = reconstruct_path(came_from, came_from[current_node.id])
-        p.append(current_node)
-        return p
+    if current_node.charactor_id in came_from:
+        path = reconstruct_path(came_from, came_from[current_node.charactor_id])
+        path.append(current_node)
+        return path
     else:
         return [current_node]
 
-def heuristic_estimate_of_distance(map, start, goal):
-    start_x = map.sector_x(start)
-    start_y = map.sector_y(start)
-    goal_x = map.sector_x(goal)
-    goal_y = map.sector_y(goal)
+def heuristic_estimate_of_distance(game_map, start, goal):
+    start_x = game_map.sector_x(start)
+    start_y = game_map.sector_y(start)
+    goal_x = game_map.sector_x(goal)
+    goal_y = game_map.sector_y(goal)
     return math.sqrt(math.pow(start_x - goal_x, 2) + math.pow(start_y - goal_y, 2)) 

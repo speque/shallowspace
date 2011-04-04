@@ -11,15 +11,15 @@ ActiveCharactorChangeEvent, OccupiedSectorAction, CharactorPlaceRequest
 
 class Player:
     """..."""
-    def __init__(self, evManager, idManager):
-        self.evManager = evManager
+    def __init__(self, event_manager, id_manager):
+        self.event_manager = event_manager
         self.game = None
         self.name = ""
-        self.evManager.register_listener(self)
+        self.event_manager.register_listener(self)
 
         self.charactors = range(4)
         for index in range(len(self.charactors)):  
-            self.charactors[index] = Charactor(evManager, idManager.getId())
+            self.charactors[index] = Charactor(event_manager, id_manager.get_id())
         self.active_charactor = self.charactors[3]
 
     def __str__(self):
@@ -29,31 +29,31 @@ class Player:
         if not isinstance(event, TickEvent):
             if isinstance(event, GameStartedEvent):
                 for charactor in self.charactors:
-                    rq = CharactorPlaceRequest(charactor)
-                    self.evManager.post(rq)
+                    request = CharactorPlaceRequest(charactor)
+                    self.event_manager.post(request)
             
             elif isinstance(event, CharactorMoveToRequest):
-                ev = CalculatePathRequest(self.active_charactor.sector, event.pos)
-                self.evManager.post(ev)
+                new_event = CalculatePathRequest(self.active_charactor.sector, event.pos)
+                self.event_manager.post(new_event)
                     
             elif isinstance(event, CharactorShootRequest):
                 self.active_charactor.shoot()
                 
             elif isinstance(event, ActiveCharactorChangeRequest):
-                def change_active_charactor(c):
-                    if not c == None and c in self.charactors and not c == self.active_charactor:
-                        self.active_charactor = c
-                        ev = ActiveCharactorChangeEvent(self.active_charactor)
-                        self.active_charactor.evManager.post(ev)
+                def change_active_charactor(charactor):
+                    if not charactor == None and charactor in self.charactors and not charactor == self.active_charactor:
+                        self.active_charactor = charactor
+                        new_event = ActiveCharactorChangeEvent(self.active_charactor)
+                        self.active_charactor.event_manager.post(new_event)
                         
-                f = change_active_charactor
-                ev = OccupiedSectorAction(event.pos, f)
-                self.evManager.post(ev)
+                function = change_active_charactor
+                new_event = OccupiedSectorAction(event.pos, function)
+                self.event_manager.post(new_event)
                         
             elif isinstance(event, CharactorMoveRequest) or isinstance(event, CharactorTurnAndMoveRequest):
                 
-                def move_if_possible(movePossible):
-                    if movePossible:
+                def move_if_possible(move_possible):
+                    if move_possible:
                         self.active_charactor.move(event.direction)
             
                 if isinstance(event, CharactorMoveRequest):
@@ -62,15 +62,15 @@ class Player:
                         self.active_charactor.turn(event.direction)
                     else:
                         # the charactor already faces that direction, let's move there, if the sector is free
-                        f = move_if_possible
-                        ev = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], f)
-                        self.evManager.post(ev)
+                        function = move_if_possible
+                        new_event = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], function)
+                        self.event_manager.post(new_event)
                         
                 elif isinstance(event, CharactorTurnAndMoveRequest):
                     if self.active_charactor.direction != event.direction:
                         self.active_charactor.turn(event.direction)
                     
-                    f = move_if_possible
-                    ev = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], f)
-                    self.evManager.post(ev)
+                    function = move_if_possible
+                    new_event = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], function)
+                    self.event_manager.post(new_event)
                         

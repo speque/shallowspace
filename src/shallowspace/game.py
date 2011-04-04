@@ -19,36 +19,36 @@ class Game:
     STATE_RUNNING = 1
     STATE_PAUSED = 2
 
-    def __init__(self, evManager):
-        self.evManager = evManager
-        self.evManager.register_listener(self)
+    def __init__(self, event_manager):
+        self.event_manager = event_manager
+        self.event_manager.register_listener(self)
 
         self.state = Game.STATE_PREPARING
         
-        self.idGenerator = ObjectIdGenerator()
+        self.id_generator = ObjectIdGenerator()
         
-        self.players = [Player(evManager, self.idGenerator)]
+        self.players = [Player(event_manager, self.id_generator)]
         
-        programPath = os.path.dirname(__file__)
-        confFilePath = os.path.abspath(os.path.join(programPath, "../../config/config.cfg"))
+        program_path = os.path.dirname(__file__)
+        conf_file_path = os.path.abspath(os.path.join(program_path, "../../config/config.cfg"))
         config = ConfigParser.ConfigParser()
-        config.read(confFilePath)
-        config.set("Images", "rootdir", os.path.abspath(os.path.join(programPath, "../../")))
+        config.read(conf_file_path)
+        config.set("Images", "rootdir", os.path.abspath(os.path.join(program_path, "../../")))
         constants.CONFIG = config
         
-        wallsUp = [int(x) for x in constants.CONFIG.get('Map', 'wallsUp').split(',')]
-        wallsRight = [int(x) for x in constants.CONFIG.get('Map', 'wallsRight').split(',')]
-        wallsDown = [int(x) for x in constants.CONFIG.get('Map', 'wallsDown').split(',')]
-        wallsLeft = [int(x) for x in constants.CONFIG.get('Map', 'wallsLeft').split(',')]
+        walls_up = [int(x) for x in constants.CONFIG.get('Map', 'walls_up')[0].split(',')]
+        walls_right = [int(x) for x in constants.CONFIG.get('Map', 'walls_right')[0].split(',')]
+        walls_down = [int(x) for x in constants.CONFIG.get('Map', 'walls_down')[0].split(',')]
+        walls_left = [int(x) for x in constants.CONFIG.get('Map', 'walls_left')[0].split(',')]
 
-        self.map = Map(evManager, wallsUp, wallsRight, wallsLeft, wallsDown)
-        self.bullets = Bullets(evManager)
+        self.map = Map(event_manager, walls_up, walls_right, walls_left, walls_down)
+        self.bullets = Bullets(event_manager)
 
     def start(self):
         self.map.build()
         self.state = Game.STATE_RUNNING
-        ev = GameStartedEvent()
-        self.evManager.post( ev )
+        event = GameStartedEvent()
+        self.event_manager.post( event )
 
     def notify(self, event):
         if isinstance( event, TickEvent ):
@@ -57,16 +57,16 @@ class Game:
         
         if isinstance( event, CharactorShootEvent ):
             bullet = self.bullets.create_bullet(event.charactor)
-            ev = BulletPlaceEvent(event.charactor.sector, bullet)
-            self.evManager.post(ev)
+            new_event = BulletPlaceEvent(event.charactor.sector, bullet)
+            self.event_manager.post(new_event)
 
 
 class ObjectIdGenerator:
     """..."""
     def __init__(self):
-        self.nextId = 0
+        self.next_id = 0
     
-    def getId(self):
-        id = self.nextId
-        self.nextId = self.nextId + 1
-        return id
+    def get_id(self):
+        result_id = self.next_id
+        self.next_id = self.next_id + 1
+        return result_id

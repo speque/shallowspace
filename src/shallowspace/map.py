@@ -18,21 +18,21 @@ class Map:
     STATE_BUILT = 1
 
     #----------------------------------------------------------------------
-    def __init__(self, evManager, wallsUp, wallsRight, wallsLeft, wallsDown):
-        self.evManager = evManager
-        self.evManager.register_listener( self )
+    def __init__(self, event_manager, walls_up, walls_right, walls_left, walls_down):
+        self.event_manager = event_manager
+        self.event_manager.register_listener( self )
 
         self.state = Map.STATE_PREPARING
 
         self.sectors = None
-        self.freeStartSectorIndices = [0, 1, 2, 3]
+        self.free_start_sector_indices = [0, 1, 2, 3]
         
-        self.mapState = MapState(evManager)
+        self.map_state = MapState(event_manager)
         
-        self.wallsUp = wallsUp
-        self.wallsRight = wallsRight
-        self.wallsLeft = wallsLeft
-        self.wallsDown = wallsDown
+        self.walls_up = walls_up
+        self.walls_right = walls_right
+        self.walls_left = walls_left
+        self.walls_down = walls_down
 
     #----------------------------------------------------------------------
     def build(self):
@@ -65,67 +65,67 @@ class Map:
             if not i % 10 == 0: #not leftmost column
                 sector.neighbors[constants.DIRECTION_LEFT] = self.sectors[i-1]
         
-        for i in self.wallsUp:
+        for i in self.walls_up:
             self.sectors[i].neighbors[constants.DIRECTION_UP] = None
             
-        for i in self.wallsRight:
+        for i in self.walls_right:
             self.sectors[i].neighbors[constants.DIRECTION_RIGHT] = None
             
-        for i in self.wallsDown:
+        for i in self.walls_down:
             self.sectors[i].neighbors[constants.DIRECTION_DOWN] = None
             
-        for i in self.wallsLeft:
+        for i in self.walls_left:
             self.sectors[i].neighbors[constants.DIRECTION_LEFT] = None
             
-        for s in self.sectors:
-            for c in s.corners:
-                if not self._is_open_corner_of(c, s):
-                    s.corners[s.corners.index(c)] = None
+        for sector in self.sectors:
+            for corner in sector.corners:
+                if not self._is_open_corner_of(corner, sector):
+                    sector.corners[sector.corners.index(corner)] = None
 
         self.state = Map.STATE_BUILT
 
-        ev = MapBuiltEvent( self )
-        self.evManager.post( ev )
+        new_event = MapBuiltEvent(self)
+        self.event_manager.post(new_event)
     
     def _is_open_corner_of(self, corner, sector):
-        for n in sector.neighbors:
-            if not n == None and corner in n.neighbors:
+        for neighbor in sector.neighbors:
+            if not neighbor == None and corner in neighbor.neighbors:
                 return True
         return False
 
 
     def fov(self, charactor):
         i = 0
-        litSectors = set()
-        litSectors.add(charactor.sector)
+        lit_sectors = set()
+        lit_sectors.add(charactor.sector)
         while i < 360:            
-            dx = math.cos(i*0.01745)
-            dy = math.sin(i*0.01745)
-            litSectors = litSectors.union(self.determine_fov(charactor.sector, charactor.radius, dx, dy))
+            delta_x = math.cos(i*0.01745)
+            delta_y = math.sin(i*0.01745)
+            lit_sectors = lit_sectors.union(self.determine_fov(charactor.sector, charactor.radius, delta_x, delta_y))
             i += 4
-        ev = DimAllSectorsRequest()
-        self.evManager.post(ev)
-        ev = SectorsLitRequest(litSectors)
-        self.evManager.post(ev)
+        new_event = DimAllSectorsRequest()
+        self.event_manager.post(new_event)
+        new_event = SectorsLitRequest(lit_sectors)
+        self.event_manager.post(new_event)
 
     #----------------------------------------------------------------------
-    def determine_fov(self, sector, radius, dx, dy):
+    def determine_fov(self, sector, radius, delta_x, delta_y):
         i = 0
-        ox = self.sector_x(sector)+0.5
-        oy = self.sector_y(sector)+0.5
-        litSectors = []
+        original_x = self.sector_x(sector)+0.5
+        original_y = self.sector_y(sector)+0.5
+        lit_sectors = []
         while i < radius:
-            oldSector = self.sector_by_coordinates((ox), (oy))
-            ox += dx;
-            oy += dy;
-            newSector = self.sector_by_coordinates((ox), (oy))
-            if not newSector == None:
-                if not newSector == oldSector and (newSector in oldSector.neighbors or newSector in oldSector.corners):  
-                    litSectors.append(newSector)
+            old_sector = self.sector_by_coordinates((original_x), (original_y))
+            original_x += delta_x
+            original_y += delta_y
+            new_sector = self.sector_by_coordinates((original_x), (original_y))
+            if not new_sector == None:
+                if not new_sector == old_sector and (new_sector in old_sector.neighbors or new_sector in old_sector.corners):  
+                    lit_sectors.append(new_sector)
                 else:
-                    return litSectors
+                    return lit_sectors
             i += 1
-        return litSectors
+        return lit_sectors
     
     def sector_x(self, sector):
         return self.sectors.index(sector) % 10
@@ -133,18 +133,18 @@ class Map:
     def sector_y(self, sector):
         return self.sectors.index(sector)/10
     
-    def sector_by_coordinates(self, x, y):
-        if x >= 0 and x < 10 and y >= 0 and y < 10:
-            index = int(math.floor(y)*10.0+math.floor(x))
+    def sector_by_coordinates(self, x_coordinate, y_coordinate):
+        if x_coordinate >= 0 and x_coordinate < 10 and y_coordinate >= 0 and y_coordinate < 10:
+            index = int(math.floor(y_coordinate)*10.0+math.floor(x_coordinate))
             if index > -1:
                 return self.sectors[index]
             
-    def charactorByCoordinates(self, x, y):
-        sector = self.sector_by_coordinates(x/constants.GRID_SIZE, y/constants.GRID_SIZE)
-        if sector == None or self.mapState.sectorIsFree(sector):
+    def charactor_by_coordinates(self, x_coordinate, y_coordinate):
+        sector = self.sector_by_coordinates(x_coordinate/constants.GRID_SIZE, y_coordinate/constants.GRID_SIZE)
+        if sector == None or self.map_state.sector_is_free(sector):
             return None
         else:
-            return self.mapState.actorsBySectorId.get(sector.id, -1)
+            return self.map_state.actors_by_sector_id.get(sector.charactor_id, -1)
     
     #----------------------------------------------------------------------
     def notify(self, event):
@@ -158,22 +158,22 @@ class Map:
                 path.append(goal)
                 for index, node in enumerate(path):
                     if index < len(path)-1:
-                        ev = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
-                        self.evManager.post(ev)
+                        new_event = CharactorTurnAndMoveRequest(node.neighbors.index(path[index+1]))
+                        self.event_manager.post(new_event)
         
         elif isinstance(event, OccupiedSectorAction):
-            event.f(self.charactorByCoordinates(event.pos[0], event.pos[1]))
+            event.function(self.charactor_by_coordinates(event.pos[0], event.pos[1]))
             
         elif isinstance(event, CharactorPlaceRequest):
-            if not len(self.freeStartSectorIndices) == 0:
-                event.charactor.place(self.sectors[self.freeStartSectorIndices.pop(0)])
+            if not len(self.free_start_sector_indices) == 0:
+                event.charactor.place(self.sectors[self.free_start_sector_indices.pop(0)])
           
             
 #------------------------------------------------------------------------------
 class Sector:
     """..."""
-    def __init__(self, id=0):
-        self.id = id
+    def __init__(self, sector_id=0):
+        self.charactor_id = sector_id
         self.neighbors = range(4)
         self.corners = range(4)
 
@@ -196,22 +196,22 @@ class Sector:
 
 class MapState:
     """Keeps record of occupied sectors and actors occupying them"""
-    def __init__(self, evManager):
-        self.evManager = evManager
-        evManager.register_listener(self)
-        self.occupiedSectorsByActorId = {}
-        self.actorsBySectorId = {}
+    def __init__(self, event_manager):
+        self.event_manager = event_manager
+        event_manager.register_listener(self)
+        self.occupied_sectors_by_actor_id = {}
+        self.actors_by_sector_id = {}
     
-    def sectorIsFree(self, sector):
-        if sector not in self.occupiedSectorsByActorId.values():
+    def sector_is_free(self, sector):
+        if sector not in self.occupied_sectors_by_actor_id.values():
             return True
         return False
     
     def notify(self, event):
         if isinstance(event, CharactorPlaceEvent) or isinstance(event, CharactorMoveEvent):
-            self.occupiedSectorsByActorId[event.charactor.id] = event.charactor.sector
-            self.actorsBySectorId[event.charactor.sector.id] = event.charactor
+            self.occupied_sectors_by_actor_id[event.charactor.charactor_id] = event.charactor.sector
+            self.actors_by_sector_id[event.charactor.sector.charactor_id] = event.charactor
 
         elif isinstance(event, FreeSectorAction):
-            event.f(self.sectorIsFree(event.sector))
+            event.function(self.sector_is_free(event.sector))
             

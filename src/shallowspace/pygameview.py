@@ -6,121 +6,123 @@ Created on Oct 31, 2010
 
 import pygame
 from sprites import CharactorSprite, SectorSprite, BulletSprite
-from event import *
+from event import BulletChangedSectorEvent, TickEvent, CharactorPlaceEvent, MapBuiltEvent, \
+CharactorMoveEvent, CharactorTurnEvent, BulletPlaceEvent, BulletsMoveEvent, BulletDestroyedEvent, \
+SectorsLitRequest, DimAllSectorsRequest
 import constants
 import math
 
 class PygameView:
     """A class representing the game view"""
     
-    def __init__(self, evManager):
-        self.evManager = evManager
-        self.evManager.register_listener( self )
+    def __init__(self, ev_manager):
+        self.event_manager = ev_manager
+        self.event_manager.register_listener( self )
 
         pygame.init()
         self.window = pygame.display.set_mode( (constants.GRID_SIZE*10, constants.GRID_SIZE*10) )
-        gameTitle = constants.CONFIG.get('Texts', 'gameTitle')
-        pygame.display.set_caption(gameTitle)
+        game_title = constants.CONFIG.get('Texts', 'game_title')
+        pygame.display.set_caption(game_title)
         
-        boardImageFileName = constants.CONFIG.get('Images', 'board')
+        board_image_file_name = constants.CONFIG.get('Images', 'board')
         
-        self.background = pygame.image.load(boardImageFileName).convert()
+        self.background = pygame.image.load(board_image_file_name).convert()
 
-        self.backSprites = pygame.sprite.RenderUpdates()
-        self.frontSprites = pygame.sprite.RenderUpdates()
+        self.back_sprites = pygame.sprite.RenderUpdates()
+        self.front_sprites = pygame.sprite.RenderUpdates()
 
 
     #----------------------------------------------------------------------
-    def show_map(self, gameMap):
-        squareRect = pygame.Rect( ( -1*constants.GRID_SIZE,0, constants.GRID_SIZE, constants.GRID_SIZE ) )
+    def show_map(self, game_map):
+        square_rect = pygame.Rect((-1*constants.GRID_SIZE, 0, constants.GRID_SIZE, constants.GRID_SIZE))
 
         i = 0
-        for sector in gameMap.sectors:
+        for sector in game_map.sectors:
             if i < 10:
-                squareRect = squareRect.move( constants.GRID_SIZE, 0 )
+                square_rect = square_rect.move( constants.GRID_SIZE, 0 )
             else:
                 i = 0
-                squareRect = squareRect.move( -(constants.GRID_SIZE*9), constants.GRID_SIZE )
+                square_rect = square_rect.move( -(constants.GRID_SIZE*9), constants.GRID_SIZE )
             i += 1
-            newSprite = SectorSprite( sector, self.backSprites )
-            newSprite.rect = squareRect
-            newSprite = None
+            new_sprite = SectorSprite( sector, self.back_sprites )
+            new_sprite.rect = square_rect
+            new_sprite = None
 
     #----------------------------------------------------------------------
     def show_charactor(self, charactor):
-        charactorSprite = CharactorSprite(self.frontSprites, charactor.id)
+        charactor_sprite = CharactorSprite(self.front_sprites, charactor.sector.charactor_id)
 
         sector = charactor.sector
-        sectorSprite = self.get_sector_sprite( sector )
-        charactorSprite.rect.center = sectorSprite.rect.center
-        sectorSprite.lit()
+        sector_sprite = self.get_sector_sprite( sector )
+        charactor_sprite.rect.center = sector_sprite.rect.center
+        sector_sprite.lit()
 
     #----------------------------------------------------------------------
     def move_charactor(self, charactor):
-        charactorSprite = self.get_charactor_sprite( charactor )
+        charactor_sprite = self.get_charactor_sprite( charactor )
 
         sector = charactor.sector
-        sectorSprite = self.get_sector_sprite( sector )
+        sector_sprite = self.get_sector_sprite( sector )
 
-        charactorSprite.moveTo = sectorSprite.rect.center
+        charactor_sprite.move_to = sector_sprite.rect.center
         
     #----------------------------------------------------------------------
     def turn_charactor(self, charactor):
-        charactorSprite = self.get_charactor_sprite( charactor )
+        charactor_sprite = self.get_charactor_sprite( charactor )
         
-        charactorSprite.turnTo = charactor.direction
+        charactor_sprite.turn_to = charactor.direction
         
     #----------------------------------------------------------------------
     def show_bullet(self, sector, bullet):
-        bulletSprite = BulletSprite(bullet, sector, self.frontSprites)
-        bulletSprite.rect.center = self.get_sector_sprite(sector).rect.center
+        bullet_sprite = BulletSprite(bullet, self.front_sprites)
+        bullet_sprite.rect.center = self.get_sector_sprite(sector).rect.center
         
     #----------------------------------------------------------------------
     def move_bullets(self):
-        bulletSprites = self.get_bullet_sprites()
-        for b in bulletSprites:
-            if b.bullet.direction == constants.DIRECTION_UP:
-                deltaX = 0
-                deltaY = -1*b.bullet.speed
-            elif b.bullet.direction == constants.DIRECTION_RIGHT:
-                deltaX = b.bullet.speed
-                deltaY = 0
-            elif b.bullet.direction == constants.DIRECTION_DOWN:
-                deltaX = 0
-                deltaY = b.bullet.speed
-            elif b.bullet.direction == constants.DIRECTION_LEFT:
-                deltaX = -1*b.bullet.speed
-                deltaY = 0
-            x, y = b.rect.center
-            b.moveTo = (x + deltaX, y + deltaY)
-            if math.floor(x/constants.GRID_SIZE) != math.floor((x + deltaX)/constants.GRID_SIZE) or \
-            math.floor(y/constants.GRID_SIZE) != math.floor((y + deltaY) / constants.GRID_SIZE):
-                ev = BulletChangedSectorEvent(b.bullet)
-                self.evManager.post(ev)
+        bullet_sprites = self.get_bullet_sprites()
+        for bullet_sprite in bullet_sprites:
+            if bullet_sprite.bullet.direction == constants.DIRECTION_UP:
+                delta_x = 0
+                delta_y = -1*bullet_sprite.bullet.speed
+            elif bullet_sprite.bullet.direction == constants.DIRECTION_RIGHT:
+                delta_x = bullet_sprite.bullet.speed
+                delta_y = 0
+            elif bullet_sprite.bullet.direction == constants.DIRECTION_DOWN:
+                delta_x = 0
+                delta_y = bullet_sprite.bullet.speed
+            elif bullet_sprite.bullet.direction == constants.DIRECTION_LEFT:
+                delta_x = -1*bullet_sprite.bullet.speed
+                delta_y = 0
+            center_x, center_y = bullet_sprite.rect.center
+            bullet_sprite.move_to = (center_x + delta_x, center_y + delta_y)
+            if math.floor(center_x/constants.GRID_SIZE) != math.floor((center_x + delta_x)/constants.GRID_SIZE) or \
+            math.floor(center_y/constants.GRID_SIZE) != math.floor((center_y + delta_y) / constants.GRID_SIZE):
+                new_event = BulletChangedSectorEvent(bullet_sprite.bullet)
+                self.event_manager.post(new_event)
                 
     #----------------------------------------------------------------------
     def destroy_bullet(self, bullet):
-        bulletSprites = self.get_bullet_sprites()
-        for b in bulletSprites:
-            if b.bullet == bullet:
-                b.remove(self.frontSprites)
+        bullet_sprites = self.get_bullet_sprites()
+        for bullet_sprite in bullet_sprites:
+            if bullet_sprite.bullet == bullet:
+                bullet_sprite.remove(self.front_sprites)
         
     #----------------------------------------------------------------------
     def get_charactor_sprite(self, charactor):
-        for s in self.frontSprites:
-            if isinstance(s, CharactorSprite) and s.id == charactor.id:
-                return s
+        for sprite in self.front_sprites:
+            if isinstance(sprite, CharactorSprite) and sprite.charactor_id == charactor.charactor_id:
+                return sprite
         return None
 
     #----------------------------------------------------------------------
     def get_bullet_sprites(self):
-        return [x for x in self.frontSprites if isinstance(x, BulletSprite)]
+        return [x for x in self.front_sprites if isinstance(x, BulletSprite)]
     
     #----------------------------------------------------------------------
     def dim_all_sectors(self):
-        for s in self.backSprites:
-            if hasattr(s, "sector"):
-                s.dim()
+        for sprite in self.back_sprites:
+            if hasattr(sprite, "sector"):
+                sprite.dim()
         
     #----------------------------------------------------------------------
     def lit_sectors(self, sectors):
@@ -130,31 +132,31 @@ class PygameView:
         
     #----------------------------------------------------------------------
     def get_sector_sprite(self, sector):
-        for s in self.backSprites:
-            if hasattr(s, "sector") and s.sector == sector:
-                return s
+        for sprite in self.back_sprites:
+            if hasattr(sprite, "sector") and sprite.sector == sector:
+                return sprite
 
     #----------------------------------------------------------------------
     def draw(self):
         #draw Everything
-        self.backSprites.clear( self.window, self.background )
-        self.frontSprites.clear( self.window, self.background )
+        self.back_sprites.clear(self.window, self.background)
+        self.front_sprites.clear(self.window, self.background)
 
-        self.backSprites.update()
-        self.frontSprites.update()
+        self.back_sprites.update()
+        self.front_sprites.update()
 
-        dirtyRects1 = self.backSprites.draw( self.window )
-        dirtyRects2 = self.frontSprites.draw( self.window )
+        dirty_rects_1 = self.back_sprites.draw( self.window )
+        dirty_rects_2 = self.front_sprites.draw( self.window )
         
-        dirtyRects = dirtyRects1 + dirtyRects2
-        pygame.display.update( dirtyRects )
+        dirty_rects = dirty_rects_1 + dirty_rects_2
+        pygame.display.update( dirty_rects )
 
     #----------------------------------------------------------------------
     def notify(self, event):
-        if not isinstance( event, TickEvent ):
-            if isinstance( event, MapBuiltEvent ):
-                gameMap = event.map
-                self.show_map( gameMap )
+        if not isinstance( event, TickEvent):
+            if isinstance( event, MapBuiltEvent):
+                game_map = event.map
+                self.show_map( game_map )
 
             elif isinstance( event, CharactorPlaceEvent ):
                 self.show_charactor( event.charactor )

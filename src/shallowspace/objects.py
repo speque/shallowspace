@@ -7,20 +7,20 @@ Created on Oct 31, 2010
 from event import BulletDestroyedEvent, BulletChangedSectorEvent, TickEvent, BulletsMoveEvent
 
 class Bullets:
-    def __init__(self, evManager):
-        self.evManager = evManager
-        self.evManager.register_listener(self)
+    def __init__(self, event_manager):
+        self.event_manager = event_manager
+        self.event_manager.register_listener(self)
         self.bullets = []
         
     def create_bullet(self, shooter):
-        newBullet = Bullet(shooter)
-        self.bullets.append(newBullet)
-        return newBullet
+        new_bullet = Bullet(shooter)
+        self.bullets.append(new_bullet)
+        return new_bullet
         
     def destroy_bullet(self, bullet):
         self.bullets.remove(bullet)
-        ev = BulletDestroyedEvent(bullet)
-        self.evManager.post(ev)
+        event = BulletDestroyedEvent(bullet)
+        self.event_manager.post(event)
         
     def notify(self, event):
         if len(self.bullets) != 0 and isinstance(event, TickEvent):
@@ -33,8 +33,8 @@ class Bullets:
                 self.destroy_bullet(bullet)
             
     def move_bullets(self):
-        ev = BulletsMoveEvent()
-        self.evManager.post(ev)
+        event = BulletsMoveEvent()
+        self.event_manager.post(event)
 
 class Bullet:
     """..."""
