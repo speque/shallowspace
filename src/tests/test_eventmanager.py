@@ -27,11 +27,11 @@ class BasicTests(unittest.TestCase):
         
     def testPost(self):
         """Test posting an event"""
-        event = EventManager()
+        event_manager = EventManager()
         event_tester = EventTester()
-        event.register_listener(event_tester)
+        event_manager.register_listener(event_tester)
         event = Event()
-        event.post(event)
+        event_manager.post(event)
         self.assertEqual(event_tester.last_event(), event)
 
 if __name__ == "__main__":
