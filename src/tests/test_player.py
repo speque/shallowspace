@@ -9,7 +9,7 @@ from shallowspace.eventmanager import EventManager
 from shallowspace.game import ObjectIdGenerator
 from shallowspace.actors import Charactor
 from shallowspace.event import GameStartedEvent, CharactorPlaceRequest,\
-    CharactorMoveToRequest, CalculatePathRequest, ActiveCharactorChangeRequest,\
+    CharactorMoveToRequest, CalculatePathRequest, ActiveCharactorChangeRequest, \
     OccupiedSectorAction
 from tests.event_tester import EventTester
 from types import FunctionType
@@ -18,10 +18,10 @@ from types import FunctionType
 class PlayerTests(unittest.TestCase):
     
     def setUp(self):
-        self.eventManager = EventManager()
-        self.idManager = ObjectIdGenerator()
-        self.evt = EventTester()
-        self.eventManager.register_listener(self.evt, ["default"])
+        self.event_manager = EventManager()
+        self.id_manager = ObjectIdGenerator()
+        self.event_tester = EventTester()
+        self.event_manager.register_listener(self.event_tester, ["default"])
         class C():
             pass
         self.game = C()
@@ -29,46 +29,46 @@ class PlayerTests(unittest.TestCase):
 
     def testInit(self):
         """Test player initialisation"""
-        p = Player(self.eventManager, self.idManager)
-        self.assertEqual(p.event_manager, self.eventManager)
-        self.assertEqual(p.game, None)
-        self.assertEqual(p.name, "")
-        self.assertTrue(p in self.eventManager.listener_groups["default"].listeners)
-        for c in p.charactors:
-            self.assertTrue(isinstance(c, Charactor))
+        player = Player(self.event_manager, self.id_manager)
+        self.assertEqual(player.event_manager, self.event_manager)
+        self.assertEqual(player.game, None)
+        self.assertEqual(player.name, "")
+        self.assertTrue(player in self.event_manager.listener_groups["default"].listeners)
+        for charactor in player.charactors:
+            self.assertTrue(isinstance(charactor, Charactor))
             #TODO check id
-        self.assertEqual(p.active_charactor, p.charactors[3])
+        self.assertEqual(player.active_charactor, player.charactors[3])
         
     def testNotifyGameStartedEvent(self):
         """Test notifying the player abot a GameStartedEvent"""
-        p = Player(self.eventManager, self.idManager)
-        ev = GameStartedEvent()
-        self.evt.clear()
-        p.notify(ev)
-        for index, charactor in enumerate(p.charactors):
-            self.assertTrue(isinstance(self.evt.events[index], CharactorPlaceRequest))
-            self.assertEqual(charactor, self.evt.events[index].charactor)
+        player = Player(self.event_manager, self.id_manager)
+        game_started_event = GameStartedEvent()
+        self.event_tester.clear()
+        player.notify(game_started_event)
+        for index, charactor in enumerate(player.charactors):
+            self.assertTrue(isinstance(self.event_tester.events[index], CharactorPlaceRequest))
+            self.assertEqual(charactor, self.event_tester.events[index].charactor)
             
     def testNotifyCharactorMoveToRequest(self):
         """Test notifying the player abot a CharactorMoveToRequest"""
-        p = Player(self.eventManager, self.idManager)
-        ev = CharactorMoveToRequest(None)
-        self.evt.clear()
-        p.notify(ev)
-        self.assertTrue(isinstance(self.evt.last_event(), CalculatePathRequest))
-        self.assertEqual(None, self.evt.last_event().pos)
+        player = Player(self.event_manager, self.id_manager)
+        request = CharactorMoveToRequest(None)
+        self.event_tester.clear()
+        player.notify(request)
+        self.assertTrue(isinstance(self.event_tester.last_event(), CalculatePathRequest))
+        self.assertEqual(None, self.event_tester.last_event().pos)
         
     #TODO test notify CharactorShootRequest
     
     def testNotifyActiveCharactorChangeRequest(self):
         """Test notifying the player abot a ActiveCharactorChangeRequest"""
-        p = Player(self.eventManager, self.idManager)
-        ev = ActiveCharactorChangeRequest(None)
-        self.evt.clear()
-        p.notify(ev)
-        self.assertTrue(isinstance(self.evt.last_event(), OccupiedSectorAction))
-        self.assertEqual(None, self.evt.last_event().pos)
-        self.assertTrue(type(self.evt.last_event().function) is FunctionType)
+        player = Player(self.event_manager, self.id_manager)
+        request = ActiveCharactorChangeRequest(None)
+        self.event_tester.clear()
+        player.notify(request)
+        self.assertTrue(isinstance(self.event_tester.last_event(), OccupiedSectorAction))
+        self.assertEqual(None, self.event_tester.last_event().pos)
+        self.assertTrue(type(self.event_tester.last_event().function) is FunctionType)
         #TODO check for function
 
 if __name__ == "__main__":

@@ -12,27 +12,27 @@ class BasicTests(unittest.TestCase):
 
     def testRegister(self):
         """Test registering a listener"""
-        ev = EventManager()
-        et = EventTester()
-        ev.register_listener(et)
-        self.assertTrue(et in ev.listener_groups["default"].listeners)
+        event = EventManager()
+        event_tester = EventTester()
+        event.register_listener(event_tester)
+        self.assertTrue(event_tester in event.listener_groups["default"].listeners)
         
     def testUnregister(self):
         """Test unregistering a listener"""
-        ev = EventManager()
-        et = EventTester()
-        ev.register_listener(et)
-        ev.unregister_listener(et)
-        self.assertFalse(et in ev.listener_groups["default"].listeners)
+        event = EventManager()
+        event_tester = EventTester()
+        event.register_listener(event_tester)
+        event.unregister_listener(event_tester)
+        self.assertFalse(event_tester in event.listener_groups["default"].listeners)
         
     def testPost(self):
         """Test posting an event"""
-        ev = EventManager()
-        et = EventTester()
-        ev.register_listener(et)
+        event = EventManager()
+        event_tester = EventTester()
+        event.register_listener(event_tester)
         event = Event()
-        ev.post(event)
-        self.assertEqual(et.last_event(), event)
+        event.post(event)
+        self.assertEqual(event_tester.last_event(), event)
 
 if __name__ == "__main__":
     unittest.main()

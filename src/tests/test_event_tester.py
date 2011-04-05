@@ -11,33 +11,33 @@ class BasicTests(unittest.TestCase):
 
     def testInit(self):
         """Test initialising event tester"""
-        et = EventTester()
-        self.assertEqual(et.events, [])
+        event_tester = EventTester()
+        self.assertEqual(event_tester.events, [])
         
     def testCheckLastEvent(self):
         """Test checking the last event"""
-        et = EventTester()
-        ev = Event()
-        et.notify(ev)
-        self.assertEqual(et.last_event(), ev)
+        event_tester = EventTester()
+        event = Event()
+        event_tester.notify(event)
+        self.assertEqual(event_tester.last_event(), event)
         
     def testCheckLastTwoEvents(self):
         """Test checking last two events"""
-        et = EventTester()
-        ev1 = Event()
-        ev2 = Event()
-        ev3 = Event()
-        et.notify(ev1)
-        et.notify(ev2)
-        et.notify(ev3)
-        self.assertEqual([ev1, ev2], et.last_n_events(2))
+        event_tester = EventTester()
+        event1 = Event()
+        event2 = Event()
+        event3 = Event()
+        event_tester.notify(event1)
+        event_tester.notify(event2)
+        event_tester.notify(event3)
+        self.assertEqual([event1, event2], event_tester.last_n_events(2))
         
     def testClear(self):
-        et = EventTester()
-        ev = Event()
-        et.notify(ev)
-        et.clear()
-        self.assertEqual(et.events, [])
+        event_tester = EventTester()
+        event = Event()
+        event_tester.notify(event)
+        event_tester.clear()
+        self.assertEqual(event_tester.events, [])
 
 if __name__ == "__main__":
     unittest.main()

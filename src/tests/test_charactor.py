@@ -14,69 +14,69 @@ from shallowspace.event import CharactorMoveEvent, CharactorTurnEvent, Charactor
 class BasicTests(unittest.TestCase):
 
     def setUp(self):
-        em = EventManager()
-        self.eventManager = em
-        self.eventTester = EventTester()
-        self.eventManager.register_listener(self.eventTester)
+        event_maanger = EventManager()
+        self.event_manager = event_maanger
+        self.event_tester = EventTester()
+        self.event_manager.register_listener(self.event_tester)
 
     def tearDown(self):
         pass
         
     def testInit(self):
         """Test character initialisation"""
-        c = Charactor(self.eventManager)
-        self.assertTrue(c in self.eventManager.listener_groups["default"].listeners)
-        self.assertEqual(c.sector, None)
-        self.assertEqual(c.charactor_id, 0)
-        self.assertEqual(c.radius, 2)
-        self.assertEqual(c.direction, shallowspace.constants.DIRECTION_DOWN)
+        charactor = Charactor(self.event_manager)
+        self.assertTrue(charactor in self.event_manager.listener_groups["default"].listeners)
+        self.assertEqual(charactor.sector, None)
+        self.assertEqual(charactor.charactor_id, 0)
+        self.assertEqual(charactor.radius, 2)
+        self.assertEqual(charactor.direction, shallowspace.constants.DIRECTION_DOWN)
 
     def testTurn(self):
         """Test turning"""
-        c = Charactor(self.eventManager)
-        c.turn(shallowspace.constants.DIRECTION_RIGHT)
-        self.assertEqual(c.direction, shallowspace.constants.DIRECTION_RIGHT)
-        lastEvent = self.eventTester.last_event()
+        charactor = Charactor(self.event_manager)
+        charactor.turn(shallowspace.constants.DIRECTION_RIGHT)
+        self.assertEqual(charactor.direction, shallowspace.constants.DIRECTION_RIGHT)
+        lastEvent = self.event_tester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorTurnEvent))
-        self.assertEqual(lastEvent.charactor, c)
+        self.assertEqual(lastEvent.charactor, charactor)
         
     def testShoot(self):
         """Test shooting"""
-        c = Charactor(self.eventManager)
-        c.shoot()
-        lastEvent = self.eventTester.last_event()
+        charactor = Charactor(self.event_manager)
+        charactor.shoot()
+        lastEvent = self.event_tester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorShootEvent))
-        self.assertEqual(lastEvent.charactor, c)
+        self.assertEqual(lastEvent.charactor, charactor)
 
     def testPlace(self):
         """Test placing"""
-        c = Charactor(self.eventManager)
-        s = Sector()
-        c.place(s)
-        lastEvent = self.eventTester.last_event()
+        charactor = Charactor(self.event_manager)
+        sector = Sector()
+        charactor.place(sector)
+        lastEvent = self.event_tester.last_event()
         self.assertTrue(isinstance(lastEvent, CharactorPlaceEvent))
-        self.assertEqual(lastEvent.charactor, c)
+        self.assertEqual(lastEvent.charactor, charactor)
 
     def testSuccesfullMove(self):
         """Test moving to a non-blocked direction"""
-        c = Charactor(self.eventManager)
-        s = Sector()
-        c.place(s)
-        n = Sector()
-        s.neighbors[shallowspace.constants.DIRECTION_UP] = n 
-        c.move(shallowspace.constants.DIRECTION_UP)
-        self.assertTrue(isinstance(self.eventTester.last_event(), CharactorMoveEvent))
-        self.assertEqual(c.sector, n)
+        charactor = Charactor(self.event_manager)
+        sector = Sector()
+        charactor.place(sector)
+        neighboring_sector = Sector()
+        sector.neighbors[shallowspace.constants.DIRECTION_UP] = neighboring_sector 
+        charactor.move(shallowspace.constants.DIRECTION_UP)
+        self.assertTrue(isinstance(self.event_tester.last_event(), CharactorMoveEvent))
+        self.assertEqual(charactor.sector, neighboring_sector)
         
     def testUnsuccesfullMove(self):
         """Test moving to a blocked direction"""
-        c = Charactor(self.eventManager)
-        s = Sector()
-        c.place(s)
-        e = self.eventTester.last_event()
-        c.move(shallowspace.constants.DIRECTION_UP)
-        self.assertEqual(self.eventTester.last_event(), e)
-        self.assertEqual(c.sector, s)
+        charactor = Charactor(self.event_manager)
+        sector = Sector()
+        charactor.place(sector)
+        event = self.event_tester.last_event()
+        charactor.move(shallowspace.constants.DIRECTION_UP)
+        self.assertEqual(self.event_tester.last_event(), event)
+        self.assertEqual(charactor.sector, sector)
 
 if __name__ == "__main__":
     unittest.main()
