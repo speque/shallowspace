@@ -13,7 +13,7 @@ import constants
 import math
 
 class PygameView:
-    """A class representing the game view"""
+    """A class representing the game view using Pygame"""
     
     def __init__(self, ev_manager):
         self.event_manager = ev_manager

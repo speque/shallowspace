@@ -1,5 +1,5 @@
 from utils import debug
-from event import Event, TickEvent
+from event import TickEvent
 
 class EventManager:
     """this object is responsible for coordinating most communication
@@ -8,11 +8,10 @@ class EventManager:
     def __init__(self):
         self.listener_groups = {"default":ListenerGroup()}
 
-    def register_listener(self, listener, groups=None):
-        groups = groups or []
-        if len(groups) == 0:
-            groups = ["default"]
-        for group_name in groups:
+    def register_listener(self, listener, *args):
+        if len(args) == 0:
+            args = ["default"]
+        for group_name in args:
             if group_name in self.listener_groups:     
                 self.listener_groups[group_name].add_listener(listener)
             else:
@@ -24,12 +23,11 @@ class EventManager:
             if listener in self.listener_groups[group].listeners:
                 del self.listener_groups[group].listeners[listener]
             
-    def post(self, event, groups=None):
-        groups = groups or []
-        if not isinstance(event, TickEvent) and not isinstance(event, Event):
+    def post(self, event, *args):
+        if not isinstance(event, TickEvent):
             debug( "     Message: " + event.name )
             
-        for group_name in groups:
+        for group_name in args:
             listener_group = self.listener_groups[group_name].listeners
             for listener in listener_group:
                 #NOTE: If the weakref has died, it will be automatically removed, so we don't have 

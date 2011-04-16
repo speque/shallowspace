@@ -20,7 +20,7 @@ class Charactor:
 
     #----------------------------------------------------------------------
     def move(self, direction):
-        if self.sector.move_possible( direction ):
+        if self.sector.move_possible(direction):
             self.sector = self.sector.neighbors[direction]
             new_event = CharactorMoveEvent(self)
             self.event_manager.post(new_event)
