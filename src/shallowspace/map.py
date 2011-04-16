@@ -18,11 +18,14 @@ class Map:
     STATE_BUILT = 1
 
     #----------------------------------------------------------------------
-    def __init__(self, event_manager, walls_up, walls_right, walls_left, walls_down):
+    def __init__(self, event_manager, grid_size_x, grid_size_y, walls_up, walls_right, walls_left, walls_down):
         self.event_manager = event_manager
         self.event_manager.register_listener( self )
 
         self.state = Map.STATE_PREPARING
+
+        self.grid_size_x = grid_size_x
+        self.grid_size_y = grid_size_y
 
         self.sectors = None
         self.free_start_sector_indices = [0, 1, 2, 3]
@@ -39,30 +42,30 @@ class Map:
         self.sectors = [Sector(x) for x in xrange(100)]
         
         for i, sector in enumerate(self.sectors):
-            if i > 9: #not first row
-                sector.neighbors[constants.DIRECTION_UP] = self.sectors[i-10]
+            if i > self.grid_size_x-1: #not first row
+                sector.neighbors[constants.DIRECTION_UP] = self.sectors[i-self.grid_size_x]
                 
-                upleft = i-11 
-                if upleft > -1 and not (upleft+1) % 10 == 0:
+                upleft = i-(self.grid_size_x+1)
+                if upleft > -1 and not (upleft+1) % self.grid_size_x == 0:
                     sector.corners[constants.DIRECTION_UP_LEFT] = self.sectors[upleft]
-                upright = i-9
-                if not (upright) % 10 == 0:
+                upright = i-(self.grid_size_x-1)
+                if not (upright) % self.grid_size_x == 0:
                     sector.corners[constants.DIRECTION_UP_RIGHT] = self.sectors[upright]
             
-            if i == 0 or not (i+1) % 10 == 0: #not rightmost column
+            if i == 0 or not (i+1) % self.grid_size_x == 0: #not rightmost column
                 sector.neighbors[constants.DIRECTION_RIGHT] = self.sectors[i+1]
             
-            if i < 90: #not last row
+            if i < self.grid_size_x*(self.grid_size_y-1): #not last row
                 sector.neighbors[constants.DIRECTION_DOWN] = self.sectors[i+10]
                 
-                downleft = i+9 
-                if not (downleft+1) % 10 == 0 :
+                downleft = i+(self.grid_size_x-1)
+                if not (downleft+1) % self.grid_size_x == 0 :
                     sector.corners[constants.DIRECTION_DOWN_LEFT] = self.sectors[downleft]
                 downright = i+11
-                if downright < 100 and not (downright) % 10 == 0:
+                if downright < self.grid_size_x*self.grid_size_y and not (downright) % self.grid_size_x == 0:
                     sector.corners[constants.DIRECTION_DOWN_RIGHT] = self.sectors[downright]
             
-            if not i % 10 == 0: #not leftmost column
+            if not i % self.grid_size_x == 0: #not leftmost column
                 sector.neighbors[constants.DIRECTION_LEFT] = self.sectors[i-1]
         
         for i in self.walls_up:
@@ -128,13 +131,13 @@ class Map:
         return lit_sectors
     
     def sector_x(self, sector):
-        return self.sectors.index(sector) % 10
+        return self.sectors.index(sector) % self.grid_size_x
     
     def sector_y(self, sector):
-        return self.sectors.index(sector)/10
+        return self.sectors.index(sector)/self.grid_size_y
     
     def sector_by_coordinates(self, x_coordinate, y_coordinate):
-        if x_coordinate >= 0 and x_coordinate < 10 and y_coordinate >= 0 and y_coordinate < 10:
+        if x_coordinate >= 0 and x_coordinate < self.grid_size_x and y_coordinate >= 0 and y_coordinate < self.grid_size_y:
             index = int(math.floor(y_coordinate)*10.0+math.floor(x_coordinate))
             if index > -1:
                 return self.sectors[index]
