@@ -36,10 +36,10 @@ class Game:
         config.set("Images", "rootdir", os.path.abspath(os.path.join(program_path, "../../")))
         constants.CONFIG = config
         
-        walls_up = [int(x) for x in constants.CONFIG.get('Map', 'walls_up')[0].split(',')]
-        walls_right = [int(x) for x in constants.CONFIG.get('Map', 'walls_right')[0].split(',')]
-        walls_down = [int(x) for x in constants.CONFIG.get('Map', 'walls_down')[0].split(',')]
-        walls_left = [int(x) for x in constants.CONFIG.get('Map', 'walls_left')[0].split(',')]
+        walls_up = [int(x) for x in constants.CONFIG.get('Map', 'walls_up').split(',')]
+        walls_right = [int(x) for x in constants.CONFIG.get('Map', 'walls_right').split(',')]
+        walls_down = [int(x) for x in constants.CONFIG.get('Map', 'walls_down').split(',')]
+        walls_left = [int(x) for x in constants.CONFIG.get('Map', 'walls_left').split(',')]
 
         self.map = Map(event_manager, walls_up, walls_right, walls_left, walls_down)
         self.bullets = Bullets(event_manager)
