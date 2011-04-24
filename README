@@ -1,5 +1,12 @@
 SHALLOW SPACE
 
+Requirements:
+
+Python 2.7.x
+Pygame
+
+***
+
 Controls:
 
 Arrow keys: Move
