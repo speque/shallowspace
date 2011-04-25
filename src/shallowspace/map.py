@@ -61,7 +61,7 @@ class Map:
                 downleft = i+(self.grid_size_x-1)
                 if not (downleft+1) % self.grid_size_x == 0 :
                     sector.corners[constants.DIRECTION_DOWN_LEFT] = self.sectors[downleft]
-                downright = i+11
+                downright = i+self.grid_size_x+1
                 if downright < self.grid_size_x*self.grid_size_y and not (downright) % self.grid_size_x == 0:
                     sector.corners[constants.DIRECTION_DOWN_RIGHT] = self.sectors[downright]
             
@@ -98,14 +98,15 @@ class Map:
 
 
     def fov(self, charactor):
-        i = 0
+        angle = 0
         lit_sectors = set()
         lit_sectors.add(charactor.sector)
-        while i < 360:            
-            delta_x = math.cos(i*0.01745)
-            delta_y = math.sin(i*0.01745)
+        while angle < 360:
+            delta_x = math.cos(angle*0.01745)
+            delta_y = math.sin(angle*0.01745)
             lit_sectors = lit_sectors.union(self.determine_fov(charactor.sector, charactor.radius, delta_x, delta_y))
-            i += 6 #magic number here
+            print [s.sector_id for s in lit_sectors]
+            angle += 6 #magic number here
         new_event = DimAllSectorsRequest()
         self.event_manager.post(new_event)
         new_event = SectorsLitRequest(lit_sectors)
