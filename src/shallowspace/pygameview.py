@@ -20,7 +20,7 @@ class PygameView:
         self.event_manager.register_listener( self )
 
         pygame.init()
-        self.window = pygame.display.set_mode( (constants.GRID_SIZE*10, constants.GRID_SIZE*10) )
+        self.window = pygame.display.set_mode( (constants.GRID_SIZE*11, constants.GRID_SIZE*10) ) #TODO: remove magic numbers
         game_title = constants.CONFIG.get('Texts', 'game_title')
         pygame.display.set_caption(game_title)
         
@@ -38,11 +38,11 @@ class PygameView:
 
         i = 0
         for sector in game_map.sectors:
-            if i < 10:
+            if i < 11:
                 square_rect = square_rect.move( constants.GRID_SIZE, 0 )
             else:
                 i = 0
-                square_rect = square_rect.move( -(constants.GRID_SIZE*9), constants.GRID_SIZE )
+                square_rect = square_rect.move( -(constants.GRID_SIZE*10), constants.GRID_SIZE ) #TODO magic number here
             i += 1
             new_sprite = SectorSprite( sector, self.back_sprites )
             new_sprite.rect = square_rect
@@ -50,7 +50,7 @@ class PygameView:
 
     #----------------------------------------------------------------------
     def show_charactor(self, charactor):
-        charactor_sprite = CharactorSprite(self.front_sprites, charactor.sector.charactor_id)
+        charactor_sprite = CharactorSprite(self.front_sprites, charactor.sector.sector_id)
 
         sector = charactor.sector
         sector_sprite = self.get_sector_sprite( sector )

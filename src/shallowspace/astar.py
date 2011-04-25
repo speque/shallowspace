@@ -14,22 +14,22 @@ def a_star(start, goal, game_map):
     g_score = {}                                    #The game_map of navigated nodes.
     h_score = {}
     f_score = {}
-    g_score[start.charactor_id] = 0                           # Distance from start along optimal path.
-    h_score[start.charactor_id] = heuristic_estimate_of_distance(game_map, start, goal)
-    f_score[start.charactor_id] = h_score[start.charactor_id]           # Estimated total distance from start to goal through neighbor.
+    g_score[start.sector_id] = 0                           # Distance from start along optimal path.
+    h_score[start.sector_id] = heuristic_estimate_of_distance(game_map, start, goal)
+    f_score[start.sector_id] = h_score[start.sector_id]           # Estimated total distance from start to goal through neighbor.
     
     while not len(openset) == 0:
         lowest_f_score = 1000
         candidate = None
         for sector in openset:
-            if f_score[sector.charactor_id] < lowest_f_score:
+            if f_score[sector.sector_id] < lowest_f_score:
                 candidate = sector
-                lowest_f_score = f_score[sector.charactor_id]
+                lowest_f_score = f_score[sector.sector_id]
         if candidate == goal:
             if len(came_from) == 0:
                 return []
             else:
-                return reconstruct_path(came_from, came_from[goal.charactor_id])
+                return reconstruct_path(came_from, came_from[goal.sector_id])
         
         openset.remove(candidate)
         closedset.add(candidate)
@@ -37,28 +37,28 @@ def a_star(start, goal, game_map):
         for neighbor in candidate.neighbors:
             if neighbor == None or neighbor in closedset or not game_map.map_state.sector_is_free(neighbor):
                 continue
-            tentative_g_score = g_score[candidate.charactor_id] + 1      # 1 = distance between candidate and neighbor
+            tentative_g_score = g_score[candidate.sector_id] + 1      # 1 = distance between candidate and neighbor
  
             if neighbor not in openset:
                 openset.add(neighbor)
                 tentative_is_better = True
-            elif tentative_g_score < g_score[neighbor.charactor_id]:
+            elif tentative_g_score < g_score[neighbor.sector_id]:
                 tentative_is_better = True
             else:
                 tentative_is_better = False
                 
             if tentative_is_better:
-                came_from[neighbor.charactor_id] = candidate
-                g_score[neighbor.charactor_id] = tentative_g_score
-                h_score[neighbor.charactor_id] = heuristic_estimate_of_distance(game_map, neighbor, goal)
-                f_score[neighbor.charactor_id] = g_score[neighbor.charactor_id] + h_score[neighbor.charactor_id]
+                came_from[neighbor.sector_id] = candidate
+                g_score[neighbor.sector_id] = tentative_g_score
+                h_score[neighbor.sector_id] = heuristic_estimate_of_distance(game_map, neighbor, goal)
+                f_score[neighbor.sector_id] = g_score[neighbor.sector_id] + h_score[neighbor.sector_id]
     return None
  
 
  
 def reconstruct_path(came_from, current_node):
-    if current_node.charactor_id in came_from:
-        path = reconstruct_path(came_from, came_from[current_node.charactor_id])
+    if current_node.sector_id in came_from:
+        path = reconstruct_path(came_from, came_from[current_node.sector_id])
         path.append(current_node)
         return path
     else:

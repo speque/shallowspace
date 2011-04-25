@@ -39,7 +39,7 @@ class Map:
 
     #----------------------------------------------------------------------
     def build(self):
-        self.sectors = [Sector(x) for x in xrange(100)]
+        self.sectors = [Sector(x) for x in xrange(self.grid_size_x*self.grid_size_y)]
         
         for i, sector in enumerate(self.sectors):
             if i > self.grid_size_x-1: #not first row
@@ -56,7 +56,7 @@ class Map:
                 sector.neighbors[constants.DIRECTION_RIGHT] = self.sectors[i+1]
             
             if i < self.grid_size_x*(self.grid_size_y-1): #not last row
-                sector.neighbors[constants.DIRECTION_DOWN] = self.sectors[i+10]
+                sector.neighbors[constants.DIRECTION_DOWN] = self.sectors[i+self.grid_size_x]
                 
                 downleft = i+(self.grid_size_x-1)
                 if not (downleft+1) % self.grid_size_x == 0 :
@@ -105,7 +105,7 @@ class Map:
             delta_x = math.cos(i*0.01745)
             delta_y = math.sin(i*0.01745)
             lit_sectors = lit_sectors.union(self.determine_fov(charactor.sector, charactor.radius, delta_x, delta_y))
-            i += 4
+            i += 6 #magic number here
         new_event = DimAllSectorsRequest()
         self.event_manager.post(new_event)
         new_event = SectorsLitRequest(lit_sectors)
@@ -134,11 +134,11 @@ class Map:
         return self.sectors.index(sector) % self.grid_size_x
     
     def sector_y(self, sector):
-        return self.sectors.index(sector)/self.grid_size_y
+        return self.sectors.index(sector)/self.grid_size_x
     
-    def sector_by_coordinates(self, x_coordinate, y_coordinate):
+    def sector_by_coordinates(self, x_coordinate, y_coordinate): 
         if x_coordinate >= 0 and x_coordinate < self.grid_size_x and y_coordinate >= 0 and y_coordinate < self.grid_size_y:
-            index = int(math.floor(y_coordinate)*10.0+math.floor(x_coordinate))
+            index = int(math.floor(y_coordinate)*11.0+math.floor(x_coordinate)) #TODO magic number
             if index > -1:
                 return self.sectors[index]
             
@@ -147,8 +147,8 @@ class Map:
         if sector == None or self.map_state.sector_is_free(sector):
             return None
         else:
-            return self.map_state.actors_by_sector_id.get(sector.charactor_id, -1)
-    
+            return self.map_state.actors_by_sector_id.get(sector.sector_id, -1)
+        
     #----------------------------------------------------------------------
     def notify(self, event):
         if isinstance(event, CharactorMoveEvent) or isinstance(event, CharactorPlaceEvent) or isinstance(event, ActiveCharactorChangeEvent):
@@ -176,7 +176,7 @@ class Map:
 class Sector:
     """..."""
     def __init__(self, sector_id=0):
-        self.charactor_id = sector_id
+        self.sector_id = sector_id
         self.neighbors = range(4)
         self.corners = range(4)
 
@@ -196,6 +196,13 @@ class Sector:
             return True
         else:
             return False
+        
+    def __repr__(self):
+        result = "[Sector] "
+        result += "id: %s, " % (self.sector_id, )
+        result += "neighbors: %s, " % ([neighbor.sector_id for neighbor in self.neighbors if not neighbor == None], )
+        result += "open corners: %s" % ([open_corner.sector_id for open_corner in self.corners if not open_corner == None])
+        return result
 
 class MapState:
     """Keeps record of occupied sectors and actors occupying them"""
@@ -213,7 +220,9 @@ class MapState:
     def notify(self, event):
         if isinstance(event, CharactorPlaceEvent) or isinstance(event, CharactorMoveEvent):
             self.occupied_sectors_by_actor_id[event.charactor.charactor_id] = event.charactor.sector
-            self.actors_by_sector_id[event.charactor.sector.charactor_id] = event.charactor
+            self.actors_by_sector_id[event.charactor.sector.sector_id] = event.charactor
+            #print [(c,d) for c,d in enumerate(self.actors_by_sector_id)]
+            #print [(c, d) for c,d in enumerate(self.occupied_sectors_by_actor_id)]
 
         elif isinstance(event, FreeSectorAction):
             event.function(self.sector_is_free(event.sector))
