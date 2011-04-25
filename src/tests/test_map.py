@@ -33,7 +33,7 @@ class MapStateTests(unittest.TestCase):
         charactor.sector = Sector()
         charactor_place_event = CharactorPlaceEvent(charactor)
         self.event_manager.post(charactor_place_event)
-        self.assertEqual(map_state.actors_by_sector_id[charactor.sector.charactor_id], charactor)
+        self.assertEqual(map_state.actors_by_sector_id[charactor.sector.sector_id], charactor)
         self.assertEqual(map_state.occupied_sectors_by_actor_id[charactor.charactor_id], charactor.sector)
         
     def testFreeSectorActionNotification(self):

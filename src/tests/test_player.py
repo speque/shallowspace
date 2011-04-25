@@ -21,7 +21,7 @@ class PlayerTests(unittest.TestCase):
         self.event_manager = EventManager()
         self.id_manager = ObjectIdGenerator()
         self.event_tester = EventTester()
-        self.event_manager.register_listener(self.event_tester, ["default"])
+        self.event_manager.register_listener(self.event_tester, ("default"))
         class C():
             pass
         self.game = C()
