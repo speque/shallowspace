@@ -12,8 +12,8 @@ class Bullets:
         self.event_manager.register_listener(self)
         self.bullets = []
         
-    def create_bullet(self, shooter):
-        new_bullet = Bullet(shooter)
+    def create_bullet(self, sector, direction):
+        new_bullet = Bullet(sector, direction)
         self.bullets.append(new_bullet)
         return new_bullet
         
@@ -39,7 +39,7 @@ class Bullets:
 class Bullet:
     """..."""
     
-    def __init__(self, shooter):
-        self.sector = shooter.sector
-        self.direction = shooter.direction
+    def __init__(self, sector, direction):
+        self.sector = sector
+        self.direction = direction
         self.speed = 20

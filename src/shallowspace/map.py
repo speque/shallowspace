@@ -105,7 +105,6 @@ class Map:
             delta_x = math.cos(angle*0.01745)
             delta_y = math.sin(angle*0.01745)
             lit_sectors = lit_sectors.union(self.determine_fov(charactor.sector, charactor.radius, delta_x, delta_y))
-            print [s.sector_id for s in lit_sectors]
             angle += 6 #magic number here
         new_event = DimAllSectorsRequest()
         self.event_manager.post(new_event)

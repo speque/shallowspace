@@ -59,7 +59,7 @@ class Game:
                 self.start()
         
         if isinstance( event, CharactorShootEvent ):
-            bullet = self.bullets.create_bullet(event.charactor)
+            bullet = self.bullets.create_bullet(event.charactor.sector, event.charactor.direction)
             new_event = BulletPlaceEvent(event.charactor.sector, bullet)
             self.event_manager.post(new_event)
 
