@@ -63,8 +63,9 @@ class Player:
                     else:
                         # the charactor already faces that direction, let's move there, if the sector is free
                         function = move_if_possible
-                        new_event = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], function)
-                        self.event_manager.post(new_event)
+                        if not self.active_charactor.sector == None:
+                            new_event = FreeSectorAction(self.active_charactor.sector.neighbors[event.direction], function)
+                            self.event_manager.post(new_event)
                         
                 elif isinstance(event, CharactorTurnAndMoveRequest):
                     if self.active_charactor.direction != event.direction:
