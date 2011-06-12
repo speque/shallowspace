@@ -10,9 +10,12 @@ from shallowspace.game import ObjectIdGenerator
 from shallowspace.actors import Charactor
 from shallowspace.event import GameStartedEvent, CharactorPlaceRequest,\
     CharactorMoveToRequest, CalculatePathRequest, ActiveCharactorChangeRequest, \
-    OccupiedSectorAction
+    OccupiedSectorAction, CharactorShootRequest, CharactorMoveRequest,\
+    FreeSectorAction
+from shallowspace.constants import *
 from tests.event_tester import EventTester
 from types import FunctionType
+from shallowspace.map import Sector
 
 
 class PlayerTests(unittest.TestCase):
@@ -58,7 +61,17 @@ class PlayerTests(unittest.TestCase):
         self.assertTrue(isinstance(self.event_tester.last_event(), CalculatePathRequest))
         self.assertEqual(None, self.event_tester.last_event().pos)
         
-    #TODO test notify CharactorShootRequest
+    def testCharactorShootRequest(self):
+        """Test notifying the player about a CharactorChoorReuquest"""
+        player = Player(self.event_manager, self.id_manager)
+        request = CharactorShootRequest()
+        self.event_tester.clear()
+        def register_shoot_call():
+            register_shoot_call.called = True
+        self.shoot_called = False
+        player.active_charactor.shoot = register_shoot_call
+        player.notify(request)
+        self.assertTrue(player.active_charactor.shoot.called)
     
     def testNotifyActiveCharactorChangeRequest(self):
         """Test notifying the player abot a ActiveCharactorChangeRequest"""
@@ -70,6 +83,35 @@ class PlayerTests(unittest.TestCase):
         self.assertEqual(None, self.event_tester.last_event().pos)
         self.assertTrue(type(self.event_tester.last_event().function) is FunctionType)
         #TODO check for function
+        
+    def testNotifyCharatorMoveRequest(self):
+        """Test notifying the player about a CharactorMoveRequest"""
+        player = Player(self.event_manager, self.id_manager)
+        request = CharactorMoveRequest(DIRECTION_DOWN)
+        player.active_charactor.direction = DIRECTION_UP
+        def register_turn_call(direction):
+            register_turn_call.called = True
+        player.active_charactor.turn = register_turn_call
+        self.event_tester.clear()
+        player.notify(request)
+        self.assertTrue(player.active_charactor.turn.called)
+        
+        request = CharactorMoveRequest(DIRECTION_UP)
+        player.notify(request)
+        # the active charactor does not have a sector yet
+        self.assertIsNone(self.event_tester.last_event())
+        
+        request = CharactorMoveRequest(DIRECTION_UP, True)
+        player.active_charactor.turn.called = False
+        player.notify(request)
+        # the active charactor does not have a sector yet
+        self.assertIsNone(self.event_tester.last_event())
+        self.assertFalse(player.active_charactor.turn.called)
+        
+        player.active_charactor.sector = Sector()
+        player.notify(request)
+        self.assertTrue(isinstance(self.event_tester.last_event(), FreeSectorAction))
+        self.assertIsNone(self.event_tester.last_event().sector)
 
 if __name__ == "__main__":
     unittest.main()

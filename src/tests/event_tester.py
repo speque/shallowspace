@@ -9,7 +9,10 @@ class EventTester():
         return self.events[:n]
     
     def last_event(self):
-        return self.events[-1]
+        if not len(self.events) == 0:
+            return self.events[-1]
+        else:
+            return None
     
     def clear(self):
         self.events = []
