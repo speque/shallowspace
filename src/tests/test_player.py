@@ -93,13 +93,18 @@ class PlayerTests(unittest.TestCase):
             register_turn_call.called = True
         player.active_charactor.turn = register_turn_call
         self.event_tester.clear()
+        
+        #charactor is facing up, request is to move down -> active charactor should turn 
         player.notify(request)
         self.assertTrue(player.active_charactor.turn.called)
+        self.assertIsNone(self.event_tester.last_event())
         
         request = CharactorMoveRequest(DIRECTION_UP)
+        player.active_charactor.turn.called = False
         player.notify(request)
         # the active charactor does not have a sector yet
         self.assertIsNone(self.event_tester.last_event())
+        self.assertFalse(player.active_charactor.turn.called)
         
         request = CharactorMoveRequest(DIRECTION_UP, True)
         player.active_charactor.turn.called = False
